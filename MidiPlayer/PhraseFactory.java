@@ -20,15 +20,9 @@ public class PhraseFactory {
 
   public String modulatePhraseFromString(String phrase, int n) {
     List<Note> modulatedPhrase = _modulatePhrase(constructNoteListFromPhraseString(phrase), n);
-    StringBuilder sb = new StringBuilder("[");
-    String separator = "";
-    for (Note note : modulatedPhrase) {
-      sb.append(separator + note.getPitch() + ":" + note.getLength());
-      separator = SEPARATOR;
-    }
-    sb.append("]");
-    System.out.println("Modulation: " + sb.toString());
-    return sb.toString();
+    String result = constructPhraseStringFromNoteList(modulatedPhrase);    
+    System.out.println("Modulation: " + result);
+    return result;
   }
 
   /*
@@ -50,7 +44,6 @@ public class PhraseFactory {
       separator = SEPARATOR;
     }
     sb.append("]");
-    System.out.println("Modulation: " + sb.toString());
     return sb.toString();
   }
 
