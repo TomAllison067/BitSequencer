@@ -424,17 +424,17 @@ printAvailableInstruments(), _sig -> __user(5)
 // )), __map
 
 // Repeat phrase
-!try seq(
-  setBpm(240),
-  seq(
-    assign(
-      x, "[C3:8, C3:8, C4:8, C4:8, Eb4:8, Eb4:8, C4:8, C4:8, Ab2:8, Ab2:8, Ab3:8, C4:8, G2:8, G2:8, Bb3:8, C4:8]"
-    ),
-    play(
-      repeat(
-        deref(x), 4)
-      )
-    )
-  ), __map
+// !try seq(
+//   setBpm(240),
+//   seq(
+//     assign(
+//       x, "[C3:8, C3:8, C4:8, C4:8, Eb4:8, Eb4:8, C4:8, C4:8, Ab2:8, Ab2:8, Ab3:8, C4:8, G2:8, G2:8, Bb3:8, C4:8]"
+//     ),
+//     play(
+//       repeat(
+//         deref(x), 4)
+//       )
+//     )
+//   ), __map
 
 !try printAvailableInstruments(), __map
