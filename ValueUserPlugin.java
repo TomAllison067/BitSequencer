@@ -12,7 +12,8 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
     SET_BPM,            // 0
     PLAY_PHRASE,        // 1    
     MODULATE_PHRASE,    // 2
-    CONCATENATE_PHRASE; // 3
+    CONCATENATE_PHRASE, // 3
+    REPEAT_PHRASE;      // 4
   }
   
 
@@ -50,6 +51,11 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
         String phrase1 = (String) args[1].value();
         String phrase2 = (String) args[2].value();
         return new __string(phraseFactory.concatPhraseFromPhraseString(phrase1, phrase2));
+      case REPEAT_PHRASE:   // 4
+        /* Argument 1: The phrase to repeat, argument 2: number of times to repeat it */
+        String phraseToRepeat = (String) args[1].value();
+        int nRepeats = (int) args[2].value();
+        return new __string(phraseFactory.repeatPhrase(phraseToRepeat, nRepeats));
       default:
         return new __bottom();
     }

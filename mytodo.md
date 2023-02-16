@@ -1,7 +1,4 @@
 * PlayParallel
-* concat
-* repeat
-* modulate phrase (done)
 * modulate note within phrase
 * instruments:
   * declare, enumerate in map

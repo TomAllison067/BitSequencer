@@ -58,4 +58,16 @@ public class PhraseFactory {
     concatenated.append(phrase2suffix);
     return concatenated.toString();
   }
+
+  public String repeatPhrase(String phrase, int n) {
+    if (n <= 1) {
+      System.out.println("Invalid argument to repeatPhrase - n should be >= 1");
+      System.exit(-1);
+    }
+    String repeated = phrase;
+    for (int i = 0; i < n; i++) {
+      repeated = concatPhraseFromPhraseString(repeated, phrase);
+    }
+    return repeated;
+  }
 }
