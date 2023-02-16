@@ -19,7 +19,7 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
 
   @Override
   public String name() {
-      return "Adrian's example ValueUserPlugin for demonstrating unpacking";
+      return "BeatSequencer";
   }
 
   @Override
