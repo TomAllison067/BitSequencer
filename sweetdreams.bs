@@ -1,0 +1,67 @@
+prelude {
+  # Global musical information
+  artist = "Eurythmics";
+  program_author = "Thomas Allison";
+  title = "Sweet Dreams (Are Made of This)";
+  bpm = 130;
+  step_size = 4; # How many 'grid steps' per beat you can write in: e.g., 4 will 
+                 # divide each beat into 4 semiquavers, and so each note and '=' extension
+                 # has the note value of one semiquaver. Minimum 1, maximum 64.
+}
+
+tracks {
+  # Map midi channels to tracks. A track is a tuple<trackname, instrument>.
+  # Tracks must be declared in a numerical order starting from 0: these will map to positions in the array
+  0: "drums", drums;
+  1: "synth1", synth;
+  2: "synth2", synth2;
+}
+
+phrases {
+  # 1 bar rest
+  restBar = [.] * 16;
+
+  # Defines a 4 bar phrase out of two repeated bars
+  bassline = (
+          [C2, -,  C2, -,  C3, -, C3, -, Eb3, -, Eb3, -, C3, -, C3, -] 
+        + [Ab1, -, Ab1, -, Ab2, -, C3, -, G1, -, G1, -, Bb3, -, A3, -]
+         ) * 2
+
+  # 1 bar kick loop
+  kick_loop = [C===, C===, C===, C===];
+
+  # 1 bar kick snare loop, not sure what the java drum notes are: i've assumed "C,D" is kick + snare for example
+  kick_snare_loop = [C===, {C,D}===, C===, {C,D}===]; 
+}
+
+patterns {
+  4_bar_rest_pattern;
+  for (int i = 0; i < length(4_bar_rest_pattern); i++) {
+    4_bar_rest_pattern[i] = restBar * 4;
+  };
+
+  bassline_intro;
+  bassline_intro[0] = kick_loop * 2 + kick_snare_loop * 2;
+  bassline_intro[1] = bassline;
+  bassline_intro[2] = [G2, -, G2=, C4,C4,C4,C4] * 8,
+
+  vocal_intro;
+  vocal_intro[0] = ...
+  ...
+
+  bridge;
+  ...
+
+  chorus;
+  ...
+}
+
+prog {
+  # put a crash symbol on the first beat of every four bars in the song 
+  int drumChannel = 0;
+  int beatsPerBar = 16;
+  for (int pattern = 0; pattern < length(composition); i = i + 4) {
+    composition[drumChannel][i * beatsPerBar] = {C,X};
+  }
+  play(sweetDreams);
+}
