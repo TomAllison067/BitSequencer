@@ -1,5 +1,6 @@
 package MidiPlayer;
 
+import javax.sound.midi.Instrument;
 import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Synthesizer;
@@ -34,8 +35,9 @@ public class MiniMusicPlayer {
       synthesizer = MidiSystem.getSynthesizer();
       synthesizer.open();
       channels = synthesizer.getChannels();
+      System.out.println("MIDI channel count: " + channels.length);
       for (MidiChannel c : channels) {
-        c.programChange(0);
+        c.programChange(57);
       }
     } catch (Exception e) {
       System.err.println("miniMusicPlayer exception: " + e.getMessage());
@@ -45,7 +47,7 @@ public class MiniMusicPlayer {
     
     setBeatRatio(0.9);
     setBpm(100);
-    setDefaultVelocity(50);
+    setDefaultVelocity(100);
     rest(2);
   }
 
@@ -156,5 +158,26 @@ public class MiniMusicPlayer {
   public int getMidiKeyFromPitch(String pitch){
     return midiNoteMap.getMidiKey(pitch);
   }
-  
+
+  public void printAllInstruments() {
+    Instrument[] instruments = synthesizer.getAvailableInstruments();
+    StringBuilder sb = new StringBuilder();
+    String eol = System.getProperty("line.separator");
+    sb.append("Instruments: " + instruments.length);
+    sb.append(eol);
+    for (Instrument instrument : instruments) {
+      sb.append(instrument.toString());
+      sb.append(eol);
+    }
+    System.out.print(sb.toString());
+  }
+
+  public void setInstrument(int channelIndex, String instrument) {
+    if (channelIndex < 0 || channelIndex > 15) {
+      System.out.println("Error, one synthesizer only supports 16 MIDI channels. Please specify a channel between 0 and 15.");
+      System.exit(-1);
+    }
+    // todo get instrument from name
+    // set channel to instrument
+  }
 }

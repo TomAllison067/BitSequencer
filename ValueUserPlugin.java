@@ -13,7 +13,8 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
     PLAY_PHRASE,        // 1    
     MODULATE_PHRASE,    // 2
     CONCATENATE_PHRASE, // 3
-    REPEAT_PHRASE;      // 4
+    REPEAT_PHRASE,      // 4
+    PRINT_AVAILABLE_INSTRUMENTS, // 5
   }
   
 
@@ -56,6 +57,9 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
         String phraseToRepeat = (String) args[1].value();
         int nRepeats = (int) args[2].value();
         return new __string(phraseFactory.repeatPhrase(phraseToRepeat, nRepeats));
+      case PRINT_AVAILABLE_INSTRUMENTS:
+        musicPlayer.printAllInstruments();
+        break;
       default:
         return new __bottom();
     }

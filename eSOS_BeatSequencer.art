@@ -254,7 +254,7 @@ concat(_phrase1, _phrase2), _sig -> concat(_phrase1, _phrase2P), _sigP
 -concatResolveLeft
 _phrase1, _sig -> _phrase1P, _sigP
 ---
-concat(_phrase1, _phrase2), _sig -> concat(_phrase1P, phrase2), _sigP
+concat(_phrase1, _phrase2), _sig -> concat(_phrase1P, _phrase2), _sigP
 
 -repeat
 _phrase |> __string(_) _n |> __int32(_)
@@ -270,6 +270,10 @@ repeat(_phrase, _n), _sig -> _repeat(_phrase, _nP), _sigP
 _phrase, _sig -> _phraseP, _sigP
 ---
 repeat(_phrase, _n), _sig -> repeat(_phraseP, _n), _sigP
+
+-printAvailableInstruments
+---
+printAvailableInstruments(), _sig -> __user(5)
 
 !trace 6
 //!try seq(assign(a, 15), seq(seq(seq(assign(b, 9), while(ne(deref(a), deref(b)), if(gt(deref(a), deref(b)), assign(a, sub(deref(a), deref(b))), assign(b, sub(deref(b), deref(a)))))), assign(gcd, deref(a))), backend(1, 2, 3)))
@@ -405,19 +409,19 @@ repeat(_phrase, _n), _sig -> repeat(_phraseP, _n), _sigP
 //  ), __map
 
 // Concatenate two phrases, assign to x, and play them.
-!try seq(
-  setBpm(120),
-  seq(
-    assign(
-       x, 
-       concat(
-        "[C3:8, C3:8, C4:8, C4:8, Eb4:8, Eb4:8, C4:8, C4:8]",
-        "[Ab2:8, Ab2:8, Ab3:8, C4:8, G2:8, G2:8, Bb3:8, C4:8]"
-      )
-    ),
-    play(deref(x)
-  )
-)), __map
+// !try seq(
+//   setBpm(120),
+//   seq(
+//     assign(
+//        x, 
+//        concat(
+//         "[C3:8, C3:8, C4:8, C4:8, Eb4:8, Eb4:8, C4:8, C4:8]",
+//         "[Ab2:8, Ab2:8, Ab3:8, C4:8, G2:8, G2:8, Bb3:8, C4:8]"
+//       )
+//     ),
+//     play(deref(x)
+//   )
+// )), __map
 
 // Repeat phrase
 !try seq(
@@ -432,3 +436,5 @@ repeat(_phrase, _n), _sig -> repeat(_phraseP, _n), _sigP
       )
     )
   ), __map
+
+!try printAvailableInstruments(), __map
