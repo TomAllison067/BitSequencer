@@ -172,12 +172,16 @@ public class MiniMusicPlayer {
     System.out.print(sb.toString());
   }
 
-  public void setInstrument(int channelIndex, String instrument) {
+  /* Used to verify a channel index argument is between 0 and 15 */
+  public void checkChannelIndex(int channelIndex) {
     if (channelIndex < 0 || channelIndex > 15) {
       System.out.println("Error, one synthesizer only supports 16 MIDI channels. Please specify a channel between 0 and 15.");
       System.exit(-1);
     }
-    // todo get instrument from name
-    // set channel to instrument
+  }
+
+  public void setInstrument(int channelIndex, String instrument) {
+    checkChannelIndex(channelIndex);
+
   }
 }
