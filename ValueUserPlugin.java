@@ -9,12 +9,13 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
   private PhraseFactory phraseFactory = new PhraseFactory();
   
   enum OpCode {
-    SET_BPM,            // 0
-    PLAY_PHRASE,        // 1    
-    MODULATE_PHRASE,    // 2
-    CONCATENATE_PHRASE, // 3
-    REPEAT_PHRASE,      // 4
-    PRINT_AVAILABLE_INSTRUMENTS, // 5
+    SET_BPM,                      // 0
+    PLAY_PHRASE,                  // 1    
+    MODULATE_PHRASE,              // 2
+    CONCATENATE_PHRASE,           // 3
+    REPEAT_PHRASE,                // 4
+    PRINT_AVAILABLE_INSTRUMENTS,  // 5
+    SET_INSTRUMENT;               // 6
   }
   
 
@@ -35,10 +36,12 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
         break;
       case PLAY_PHRASE:     // 1
         /**
-         * Argument 1: the phrase string
+         * Argument 1: the channel
+         * Argument 2: the phrase to play
          */
-        String phrase = (String) args[1].value();
-        musicPlayer.playPhrase(phraseFactory.constructNoteListFromPhraseString(phrase));
+        int channel = (int) args[1].value();
+        String phrase = (String) args[2].value();
+        musicPlayer.playPhrase(channel, phraseFactory.constructNoteListFromPhraseString(phrase));
         break;
       case MODULATE_PHRASE: // 2
         /* Argument 1: Identifier of phrase, argument 2: amount to modulate by */
@@ -59,6 +62,12 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
         return new __string(phraseFactory.repeatPhrase(phraseToRepeat, nRepeats));
       case PRINT_AVAILABLE_INSTRUMENTS:
         musicPlayer.printAllInstruments();
+        break;
+      case SET_INSTRUMENT:
+        // Set a given midi channel (between 0-15) to an instrument (0-127)
+        int channelIndex = (int) args[1].value();
+        int instrument = (int) args[2].value();
+        musicPlayer.setInstrument(channelIndex, instrument);
         break;
       default:
         return new __bottom();

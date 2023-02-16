@@ -37,7 +37,7 @@ public class MiniMusicPlayer {
       channels = synthesizer.getChannels();
       System.out.println("MIDI channel count: " + channels.length);
       for (MidiChannel c : channels) {
-        c.programChange(57);
+        c.programChange(0);
       }
     } catch (Exception e) {
       System.err.println("miniMusicPlayer exception: " + e.getMessage());
@@ -106,12 +106,12 @@ public class MiniMusicPlayer {
     }
   }
 
-  void play(int k, int length) {
+  void play(int channel, int k, int length) {
     System.out.println("Playing " + k);
     try {
-      channels[1].noteOn(k, defaultVelocity);
+      channels[channel].noteOn(k, defaultVelocity);
       Thread.sleep(beatSoundDelay / (length / 4));
-      channels[1].noteOn(k, 0);
+      channels[channel].noteOn(k, 0);
       Thread.sleep(beatSilenceDelay / (length / 4));
     } catch (InterruptedException e) {
       /* ignore */
@@ -137,21 +137,21 @@ public class MiniMusicPlayer {
     synthesizer.close();
   }
 
-  public void playPhrase(List<Note> phrase) {
+  public void playPhrase(int channel, List<Note> phrase) {
     System.out.println("PLAYING PHRASE");
     for (Note note : phrase) {
-      playNote(note);
+      playNote(channel, note);
     }
   }
 
-  public void playNote(Note note) {
+  public void playNote(int channel, Note note) {
     String pitch = note.getPitch();
     Integer length = note.getLength();
     if (note.getPitch().equals(".")) {
       rest(1, length);
     } else {
       int midiKey = getMidiKeyFromPitch(pitch);
-      play(midiKey, length);
+      play(channel, midiKey, length);
     }
   }
 
@@ -180,8 +180,8 @@ public class MiniMusicPlayer {
     }
   }
 
-  public void setInstrument(int channelIndex, String instrument) {
+  public void setInstrument(int channelIndex, int instrumentIndex) {
     checkChannelIndex(channelIndex);
-
+    channels[channelIndex].programChange(instrumentIndex);
   }
 }
