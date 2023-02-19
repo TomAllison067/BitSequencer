@@ -83,18 +83,18 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
         /* Argument 1: the map */
         System.out.println("Type of arg 1 is " + args[1].getClass());
         Value map = args[1];
-        List<RunnablePlayer> threads;
+        List<Thread> threads;
         if (map.value() instanceof HashMap<?, ?>) {
-          threads = new ArrayList<RunnablePlayer>(((HashMap<?, ?>) map.value()).size());
+          threads = new ArrayList<Thread>(((HashMap<?, ?>) map.value()).size());
           for (Map.Entry<?, ?> e : ((HashMap<?, ?>) map.value()).entrySet()) {
             int key = (int) ((Value) e.getKey()).value();
             String val = (String) ((Value) e.getValue()).value();
             threads.add(
-              new RunnablePlayer(key, channelsToInstruments.getOrDefault(key, 0), val)
+              new Thread(new RunnablePlayer(key, channelsToInstruments.getOrDefault(key, 0), val))
             );
           }
-          for (RunnablePlayer thread : threads) {
-            thread.run();
+          for (Thread thread : threads) {
+            thread.start();
           }
         }
         break;
