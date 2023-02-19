@@ -2,3 +2,4 @@
 * instruments:
   * declare, enumerate in map
 * update internal syntax
+* test if/control flow
