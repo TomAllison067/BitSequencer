@@ -41,7 +41,7 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
          */
         int channel = (int) args[1].value();
         String phrase = (String) args[2].value();
-        musicPlayer.playPhrase(channel, phraseFactory.constructNoteListFromPhraseString(phrase));
+        musicPlayer.playPhrase(channel, phraseFactory.constructMeasureListFromPhraseString(phrase));
         break;
       case MODULATE_PHRASE: // 2
         /* Argument 1: Identifier of phrase, argument 2: amount to modulate by */

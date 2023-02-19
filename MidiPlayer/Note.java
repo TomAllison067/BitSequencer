@@ -2,20 +2,14 @@ package MidiPlayer;
 
 public class Note {
   private String pitch;
-  private int length;
   private MidiNoteMapSingleton instance = MidiNoteMapSingleton.INSTANCE;
 
-  public Note(String pitch, int length) {
+  public Note(String pitch) {
     this.pitch = pitch;
-    this.length = length;
   }
 
   public String getPitch() {
     return this.pitch;
-  }
-
-  public Integer getLength() {
-    return this.length;
   }
 
   /**
@@ -24,8 +18,11 @@ public class Note {
   public Note modulate(int n) {
     int shiftedKey = instance.getMidiKey(this.pitch) + n;
     return new Note(
-      instance.getNoteFromMidiKey(shiftedKey),
-      this.length
+      instance.getNoteFromMidiKey(shiftedKey)
     );
+  }
+
+  public boolean isRest() {
+    return this.pitch.equals(".");
   }
 }

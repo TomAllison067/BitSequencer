@@ -15,6 +15,8 @@ TODO: You can set instruments via the programChange method of a MidiChannel.
 
 
 public class MiniMusicPlayer {
+  private final int SUBDIVISION_DIVISOR = 4;
+
   private Synthesizer synthesizer;
   private MidiChannel[] channels;
   private int defaultOctave = 5;
@@ -100,7 +102,7 @@ public class MiniMusicPlayer {
 
   public void rest(int beats, int length) {
     try {
-      Thread.sleep((long) (beats * beatPeriod) / (length / 4));
+      Thread.sleep((long) (beats * beatPeriod) / (length / SUBDIVISION_DIVISOR));
     } catch (InterruptedException e) {
       /* ignore */
     }
@@ -110,9 +112,9 @@ public class MiniMusicPlayer {
     System.out.println("Playing " + k);
     try {
       channels[channel].noteOn(k, defaultVelocity);
-      Thread.sleep(beatSoundDelay / (length / 4));
+      Thread.sleep(beatSoundDelay / (length / SUBDIVISION_DIVISOR));
       channels[channel].noteOn(k, 0);
-      Thread.sleep(beatSilenceDelay / (length / 4));
+      Thread.sleep(beatSilenceDelay / (length / SUBDIVISION_DIVISOR));
     } catch (InterruptedException e) {
       /* ignore */
     }
@@ -131,27 +133,57 @@ public class MiniMusicPlayer {
       /* ignore */
     }
   }
+
+  public void playNote(int channel, Note note, int length) {
+    String pitch = note.getPitch();
+    if (note.isRest()) {
+      rest(1, length);
+    } else {
+      int midiKey = getMidiKeyFromPitch(pitch);
+      play(channel, midiKey, length);
+    }
+  }
+
+  public void playNotes(int channel, List<Note> notes, int length) {
+    try {
+      for (Note note : notes) {
+        if (!note.isRest()) {
+          channels[channel].noteOn(getMidiKeyFromPitch(note.getPitch()), defaultVelocity);
+        }
+      }
+      Thread.sleep(beatSoundDelay / (length / SUBDIVISION_DIVISOR));
+      for (Note note : notes) {
+        if (!note.isRest()) {
+          channels[channel].noteOn(getMidiKeyFromPitch(note.getPitch()), 0);
+        }
+      }
+      Thread.sleep(beatSoundDelay / (length / SUBDIVISION_DIVISOR));
+    } catch (InterruptedException e) {
+      /* ignore */
+    }
+
+  }
     
   void close() {
     rest(3);
     synthesizer.close();
   }
 
-  public void playPhrase(int channel, List<Note> phrase) {
+  public void playPhrase(int channel, List<Measure> phrase) {
     System.out.println("PLAYING PHRASE");
-    for (Note note : phrase) {
-      playNote(channel, note);
+    for (Measure measure : phrase) {
+      playMeasure(channel, measure);
     }
   }
 
-  public void playNote(int channel, Note note) {
-    String pitch = note.getPitch();
-    Integer length = note.getLength();
-    if (note.getPitch().equals(".")) {
-      rest(1, length);
+  public void playMeasure(int channel, Measure measure) {
+    System.out.println("playMeasure: length is " + measure.getLength());
+    if (measure.isChord()) {
+      playNotes(channel, measure.getNotes(), measure.getLength());
     } else {
-      int midiKey = getMidiKeyFromPitch(pitch);
-      play(channel, midiKey, length);
+      for (Note note : measure.getNotes()) {
+        playNote(channel, note, measure.getLength());
+      }
     }
   }
 

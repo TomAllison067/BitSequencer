@@ -6,21 +6,42 @@ import java.util.List;
 public class PhraseFactory {
   private final String SEPARATOR = ", ";
 
-  public List<Note> constructNoteListFromPhraseString(String phraseString) {
-    System.out.println("constructNoteListFromPhraseString: " + phraseString);
+  public List<Measure> constructMeasureListFromPhraseString(String phraseString) {
+    System.out.println("constructMeasureListFromPhraseString: " + phraseString);
     phraseString = phraseString.substring(1, phraseString.length() - 1);
-    String[] notes = phraseString.split(",[ ]+");
-    List<Note> phrase = new ArrayList<Note>();
-    for (String note : notes) {
+    String[] phraseStringArray = phraseString.split(",[ ]+");
+    List<Measure> phrase = new ArrayList<Measure>();
+    for (String note : phraseStringArray) {
       String[] components = note.split(":");
-      phrase.add(new Note(components[0], Integer.parseInt(components[1])));
+      int length = Integer.parseInt(components[1]);
+      System.out.println("constructMeasureListFromPhraseString: note length is " + length);
+      phrase.add(new Measure(
+        parseComponentToNote(components[0]), length));
     }
     return phrase;
   }
 
+  public List<Note> parseComponentToNote(String component) {
+    System.out.println("parseComponentToString: " + component);
+    List<Note> notes = new ArrayList<Note>();
+    if (component.startsWith("{") && component.endsWith("}")) {
+      /* Case 1: chords */
+      String[] noteStrings = component.substring(1, component.length() - 1).split("-");
+      for (String noteString : noteStrings) {
+        System.out.println("parseComponentToString: note is " + noteString);
+        notes.add(new Note(noteString));
+      }
+    } else {
+      /* Case 2: Single notes */
+      System.out.println("parseComponentToString: note is " + component);
+      notes.add(new Note(component));
+    } 
+    return notes;
+  }
+
   public String modulatePhraseFromString(String phrase, int n) {
-    List<Note> modulatedPhrase = _modulatePhrase(constructNoteListFromPhraseString(phrase), n);
-    String result = constructPhraseStringFromNoteList(modulatedPhrase);    
+    List<Measure> modulatedPhrase = _modulatePhrase(constructMeasureListFromPhraseString(phrase), n);
+    String result = constructPhraseStringFromMeasureList(modulatedPhrase);    
     System.out.println("Modulation: " + result);
     return result;
   }
@@ -28,20 +49,33 @@ public class PhraseFactory {
   /*
    * Shift all notes in a phrase by n, and return a new phrase.
    */
-  private List<Note> _modulatePhrase(List<Note> originalPhrase, int n) {
-    List<Note> shiftedPhrase = new ArrayList<Note>();
-    for (Note note : originalPhrase) {
-      shiftedPhrase.add(note.modulate(n));
+  private List<Measure> _modulatePhrase(List<Measure> originalPhrase, int n) {
+    List<Measure> shiftedPhrase = new ArrayList<Measure>();
+    for (Measure measure : originalPhrase) {
+      shiftedPhrase.add(measure.modulate(n));
     }
     return shiftedPhrase;
   }
 
-  public String constructPhraseStringFromNoteList(List<Note> phrase) {
+  public String constructPhraseStringFromMeasureList(List<Measure> phrase) {
     StringBuilder sb = new StringBuilder("[");
     String separator = "";
-    for (Note note : phrase) {
-      sb.append(separator + note.getPitch() + ":" + note.getLength());
-      separator = SEPARATOR;
+    for (Measure measure : phrase) {
+      if (measure.isChord()) {
+        sb.append(separator);
+        separator = "";
+        sb.append("{");
+        for (Note note : measure.getNotes()) {
+          sb.append(separator + note.getPitch() + ":" + measure.getLength());
+          separator = SEPARATOR;
+        }
+        sb.append("}");
+      } else {
+        for (Note note : measure.getNotes()) {
+          sb.append(separator + note.getPitch() + ":" + measure.getLength());
+          separator = SEPARATOR;
+        }
+      }
     }
     sb.append("]");
     return sb.toString();
