@@ -14,6 +14,8 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
   private MiniMusicPlayer musicPlayer = new MiniMusicPlayer();
   private PhraseFactory phraseFactory = new PhraseFactory();
   
+  private int bpm = 120;
+
   private Map<Integer, Integer> channelsToInstruments = new HashMap<Integer, Integer>();
   
   enum OpCode {
@@ -41,7 +43,8 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
     OpCode opCode = OpCode.values()[(int) args[0].value()];
     switch (opCode) {
       case SET_BPM:         // 0
-        musicPlayer.setBpm((int) args[1].value());
+        this.bpm = (int) args[1].value();
+        musicPlayer.setBpm(this.bpm);
         break;
       case PLAY_PHRASE:     // 1
         /**
@@ -81,22 +84,29 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
         break;
       case PLAY_PARALLEL: // 7
         /* Argument 1: the map */
-        System.out.println("Type of arg 1 is " + args[1].getClass());
-        Value map = args[1];
-        List<Thread> threads;
-        if (map.value() instanceof HashMap<?, ?>) {
-          threads = new ArrayList<Thread>(((HashMap<?, ?>) map.value()).size());
-          for (Map.Entry<?, ?> e : ((HashMap<?, ?>) map.value()).entrySet()) {
-            int key = (int) ((Value) e.getKey()).value();
-            String val = (String) ((Value) e.getValue()).value();
-            threads.add(
-              new Thread(new RunnablePlayer(key, channelsToInstruments.getOrDefault(key, 0), val))
-            );
+        try {
+          System.out.println("Type of arg 1 is " + args[1].getClass());
+          Value map = args[1];
+          List<Thread> threads;
+          if (map.value() instanceof HashMap<?, ?>) {
+            threads = new ArrayList<Thread>(((HashMap<?, ?>) map.value()).size());
+            for (Map.Entry<?, ?> e : ((HashMap<?, ?>) map.value()).entrySet()) {
+              int key = (int) ((Value) e.getKey()).value();
+              String val = (String) ((Value) e.getValue()).value();
+              threads.add(
+                new Thread(new RunnablePlayer(key, channelsToInstruments.getOrDefault(key, 0), val, this.bpm))
+              );
+            }
+            for (Thread thread : threads) {
+              thread.start();
+            }
+            for (Thread thread : threads) {
+              thread.join();
+            }
           }
-          for (Thread thread : threads) {
-            thread.start();
-          }
-        }
+      } catch (InterruptedException e) {
+        /* ignore  */
+      }
         break;
       default:
         return new __bottom();

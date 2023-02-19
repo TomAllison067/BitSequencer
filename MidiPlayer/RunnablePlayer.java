@@ -8,11 +8,12 @@ public class RunnablePlayer implements Runnable {
   private int channel;
   private List<Measure> phrase;
 
-  public RunnablePlayer(int channel, int instrument, String phrase) {
+  public RunnablePlayer(int channel, int instrument, String phrase, int bpm) {
     this.channel = channel;
     this.phrase = phraseFactory.constructMeasureListFromPhraseString(phrase);
     musicPlayer = new MiniMusicPlayer();
     musicPlayer.setInstrument(channel, instrument);
+    musicPlayer.setBpm(bpm);
   }
 
   public void run() {
