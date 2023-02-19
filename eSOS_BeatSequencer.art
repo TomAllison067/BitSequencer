@@ -282,27 +282,34 @@ _channel |> __int32(_) _instrument |> __int32(_)
 setChannelInstrument(_channel, _instrument), _sig, _parallelMap -> __user(6, _channel, _instrument), _sig, _parallelMap
 
 
--playParallelCallUser
+-playParallelLeafNode
+_channel |> __int32(_) _phrase |> __string(_) 
 ---
-playParallel(__done), _sig, _parallelMap -> __user(7, _parallelMap), _sig, _parallelMap
+playParallel(_channel, _phrase), _sig, _parallelMap -> __done, _sig, __put(_parallelMap, _channel, _phrase) 
 
--playParallelEndNested
-_channel |> __int32(_) _phrase |> __string(_)
+-playParallelLeafNodeResolvePhrase
+_channel |> __int32(_) _phrase, _sig, _parallelMap -> _phraseP, _sigP, _parallelMapP
 ---
-playParallel(_channel, _phrase, __done), _sig, _parallelMap -> __done, _sig, __put(_parallelMap, _channel, _phrase)
+playParallel(_channel, _phrase), _sig, _parallelMap -> playParallel(_channel, _phraseP), _sigP, _parallelMapP
 
--playParallelNested
-_phrase |> __string(_) _next, _sig, _parallelMap -> _nextP, _sigP, _parallelMapP
+-playParallelNextIsDone
+_channel |> __int32(_) _phrase |> __string(_) _next |> __done
 ---
-playParallel(_channel, _phrase, _next), _sig, _parallelMap -> playParallel(__done), _sigP, __put(_parallelMapP, _channel, _phrase)
+playParallel(_channel, _phrase, _next), _sig, _parallelMap -> playParallel(_channel, _phrase), _sig, _parallelMap
+
+-playParallelResolveNext
+_channel |> __int32(_) _phrase |> __string(_) _next, _sig, _parallelMap -> _nextP, _sigP, _parallelMapP
+---
+playParallel(_channel, _phrase, _next), _sig, _parallelMap -> playParallel(_channel, _phrase, _nextP), _sigP, _parallelMapP
 
 -playParallelResolvePhrase
 _phrase, _sig, _parallelMap -> _phraseP, _sigP, _parallelMapP
 ---
-playParallel(_channel, _phrase), _sig, _parallelMap -> playParallel(_channel, _phraseP), _sigP, _parallelMapP
+playParallel(_channel, _phrase, _next), _sig, _parallelMap -> playParallel(_channel, _phraseP, _next), _sigP, _parallelMapP
 
-
-
+-playAll
+---
+playAll(), _sig, _parallelMap -> __user(7, _parallelMap), _sig, _parallelMap
 
 !trace 3
 //!try seq(assign(a, 15), seq(seq(seq(assign(b, 9), while(ne(deref(a), deref(b)), if(gt(deref(a), deref(b)), assign(a, sub(deref(a), deref(b))), assign(b, sub(deref(b), deref(a)))))), assign(gcd, deref(a))), backend(1, 2, 3)))
@@ -359,10 +366,11 @@ playParallel(_channel, _phrase), _sig, _parallelMap -> playParallel(_channel, _p
   setChannelInstrument(1, 45),
   seq(
     setChannelInstrument(2,128),
+    seq(
     playParallel(
       1, "[C3:8, C3:8, C4:8, C4:8, Eb4:8, Eb4:8, C4:8, C4:8, Ab2:8, Ab2:8, Ab3:8, C4:8, G2:8, G2:8, Bb3:8, C4:8]",
       playParallel(
-        2, repeat("[C3:4, C3:4, C3:4, C3:4, C3:4]", 2)
-      , __done)
-    )
+        2, repeat("[C3:4, C3:4, C3:4, C3:4]", 1)
+      )
+    ), playAll())
   ))), __map, __map

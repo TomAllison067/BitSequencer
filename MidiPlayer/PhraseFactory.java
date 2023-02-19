@@ -94,8 +94,8 @@ public class PhraseFactory {
   }
 
   public String repeatPhrase(String phrase, int n) {
-    if (n <= 1) {
-      System.out.println("Invalid argument to repeatPhrase - n should be >= 1");
+    if (n <= 0) {
+      System.out.println("Invalid argument to repeatPhrase - n should be >= 0");
       System.exit(-1);
     }
     String repeated = phrase;
