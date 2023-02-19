@@ -281,6 +281,21 @@ _channel |> __int32(_) _instrument |> __int32(_)
 ---
 setChannelInstrument(_channel, _instrument), _sig -> __user(6, _channel, _instrument), _sig
 
+-playParallelEndNested
+_channel |> __int32(_) _phrase |> __string(_)
+---
+playParallel(_channel, _phrase), _sig, _parallelMap -> __done, _sig, __put(_parallelMap, _channel, _phrase)
+
+-playParallelNested
+_next, _sig, _parallelMap -> _nextP, _sigP, _parallelMapP
+---
+playParallel(_channel, _phrase, _next), _sig, _parallelMap -> playParallel(__done), _sigP, __put(_parallelMapP, _channel, _phrase)
+
+-playParallelCallUser
+---
+playParallel(__done), _sig, _parallelMap -> __user(7, _parallelMap), _sig, _parallelMap
+
+
 !trace 3
 !try seq(assign(a, 15), seq(seq(seq(assign(b, 9), while(ne(deref(a), deref(b)), if(gt(deref(a), deref(b)), assign(a, sub(deref(a), deref(b))), assign(b, sub(deref(b), deref(a)))))), assign(gcd, deref(a))), backend(1, 2, 3)))
  !try seq(seq(seq(seq(assign(a, 15), assign(b, 9)), while(ne(deref(a), deref(b)), if(gt(deref(a), deref(b)), assign(a, sub(deref(a), deref(b))), assign(b, sub(deref(b), deref(a)))))), assign(gcd, deref(a))), backend(1, 2, 3))
@@ -311,7 +326,7 @@ setChannelInstrument(_channel, _instrument), _sig -> __user(6, _channel, _instru
 // !try seq( setBpm(120), seq( assign( x, "[C3:8, C3:8, C4:8, C4:8, Eb4:8, Eb4:8, C4:8, C4:8, Ab2:8, Ab2:8, Ab3:8, C4:8, G2:8, G2:8, Bb3:8, C4:8]" ), seq( assign( y, modulate(deref(x), 5) ), seq( play(1, deref(x)), play(1, deref(y)) ) ) ) ), __map
 
 // Test anonymous phrases modulated from a named phrase
-// !try seq( setBpm(120), seq( assign( x, "[C3:8, C3:8, C4:8, C4:8, Eb4:8, Eb4:8, C4:8, C4:8, Ab2:8, Ab2:8, Ab3:8, C4:8, G2:8, G2:8, Bb3:8, C4:8]" ), seq( assign( n, 0 ), while( ne(deref(n), 4), seq( play(1, modulate(deref(x), deref(n)) ), assign(n, add(deref(n), 1)) ) ) ) ) ), __map
+!try seq( setBpm(120), seq( assign( x, "[C3:8, C3:8, C4:8, C4:8, Eb4:8, Eb4:8, C4:8, C4:8, Ab2:8, Ab2:8, Ab3:8, C4:8, G2:8, G2:8, Bb3:8, C4:8]" ), seq( assign( n, 0 ), while( ne(deref(n), 4), seq( play(1, modulate(deref(x), deref(n)) ), assign(n, add(deref(n), 1)) ) ) ) ) ), __map
 
 // Concatenate two phrases, assign to x, and play them.
 // !try seq( setBpm(120), seq( assign( x, concat( "[C3:8, C3:8, C4:8, C4:8, Eb4:8, Eb4:8, C4:8, C4:8]", "[Ab2:8, Ab2:8, Ab3:8, C4:8, G2:8, G2:8, Bb3:8, C4:8]" ) ), play(1, deref(x) ) )), __map
@@ -321,11 +336,12 @@ setChannelInstrument(_channel, _instrument), _sig -> __user(6, _channel, _instru
 
 !try printAvailableInstruments(), __map
 
-// !try seq(setBpm(120), seq( setChannelInstrument(1, 90) , play(1, "[C4:4, E4:4, G4:4, C5:4]") ) ), __map
+!try seq(setBpm(120), seq( setChannelInstrument(1, 90) , play(1, "[C4:4, E4:4, G4:4, C5:4]") ) ), __map
 
 // Chords in a phrase
-!try seq(
-  setBpm(120),
-  play(1,
-    "[C4:8, E4:8, G4:8, C:8, .:8, {G4-B4-D4}:8, .:8, {C4-E4-G4}:8, .:8, C2:4]")
-), __map
+!try seq( setBpm(120), play(1, "[C4:8, E4:8, G4:8, C5:8, .:8, {G4-B4-D4}:8, .:8, {C4-E4-G4}:8, .:8, C2:4]") ), __map
+
+// Parallel
+!try playParallel(1, "[B4:8, C4:8, E4:4]",
+      playParallel(2, "[E4:8]",
+        playParallel(3, "[G4:8]"))), __map, __map

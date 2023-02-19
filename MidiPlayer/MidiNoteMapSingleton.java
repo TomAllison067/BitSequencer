@@ -7,7 +7,7 @@ public enum MidiNoteMapSingleton {
   INSTANCE();
 
   /* Array positions to their note values, i.e. 0-127 */
-  private int[] midiNoteArray = new int[128];
+  private int[] midiNoteArray;
 
   /* Note names to their midi keys */
   private HashMap<String, Integer> baseNoteToMidiKey = new HashMap<String, Integer>();
@@ -25,33 +25,34 @@ public enum MidiNoteMapSingleton {
   }
 
   private void initBaseNoteToMidiKey() {
-    baseNoteToMidiKey.put("C", 0);
-    baseNoteToMidiKey.put("C#", 1);
-    baseNoteToMidiKey.put("Db", 1);
-    baseNoteToMidiKey.put("D", 2);
-    baseNoteToMidiKey.put("D#", 3);
-    baseNoteToMidiKey.put("Eb", 3);
-    baseNoteToMidiKey.put("E", 4);
-    baseNoteToMidiKey.put("F", 5);
-    baseNoteToMidiKey.put("F#", 6);
-    baseNoteToMidiKey.put("Gb", 6);
-    baseNoteToMidiKey.put("G", 7);
-    baseNoteToMidiKey.put("G#", 8);
-    baseNoteToMidiKey.put("Ab", 8);
-    baseNoteToMidiKey.put("A", 9);
-    baseNoteToMidiKey.put("A#", 10);
-    baseNoteToMidiKey.put("Bb", 10);
-    baseNoteToMidiKey.put("B", 11);
+    baseNoteToMidiKey.put("A", 21);
+    baseNoteToMidiKey.put("A#", 22);
+    baseNoteToMidiKey.put("Bb", 22);
+    baseNoteToMidiKey.put("B", 23);
+    baseNoteToMidiKey.put("C", 24);
+    baseNoteToMidiKey.put("C#", 25);
+    baseNoteToMidiKey.put("Db", 25);
+    baseNoteToMidiKey.put("D", 26);
+    baseNoteToMidiKey.put("D#", 27);
+    baseNoteToMidiKey.put("Eb", 27);
+    baseNoteToMidiKey.put("E", 28);
+    baseNoteToMidiKey.put("F", 29);
+    baseNoteToMidiKey.put("F#", 30);
+    baseNoteToMidiKey.put("Gb", 30);
+    baseNoteToMidiKey.put("G", 31);
+    baseNoteToMidiKey.put("G#", 32);
+    baseNoteToMidiKey.put("Ab", 32);
 
     Map<String, Integer> tmp = new HashMap<String, Integer>();
     for (Map.Entry<String, Integer> e : baseNoteToMidiKey.entrySet()) {
       for (int i = 1; i <= 9; i++) {
         String newKey = e.getKey() + Integer.toString(i);
-        int newValue = e.getValue() + (12 * i);
+        int newValue = e.getValue() + (12 * (i - 1));
         tmp.put(newKey, newValue);
       }
     }
     baseNoteToMidiKey.putAll(tmp);
+    midiNoteArray = new int[baseNoteToMidiKey.size()];
   }
 
   private void initInverseMap() {

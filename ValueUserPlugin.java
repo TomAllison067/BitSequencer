@@ -1,12 +1,20 @@
 import uk.ac.rhul.cs.csle.art.util.ARTException;
 import uk.ac.rhul.cs.csle.art.value.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import MidiPlayer.MiniMusicPlayer;
 import MidiPlayer.PhraseFactory;
+import MidiPlayer.RunnablePlayer;
 
 public class ValueUserPlugin implements ValueUserPluginInterface {
   private MiniMusicPlayer musicPlayer = new MiniMusicPlayer();
   private PhraseFactory phraseFactory = new PhraseFactory();
+  
+  private Map<Integer, Integer> channelsToInstruments = new HashMap<Integer, Integer>();
   
   enum OpCode {
     SET_BPM,                      // 0
@@ -15,7 +23,8 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
     CONCATENATE_PHRASE,           // 3
     REPEAT_PHRASE,                // 4
     PRINT_AVAILABLE_INSTRUMENTS,  // 5
-    SET_INSTRUMENT;               // 6
+    SET_INSTRUMENT,               // 6
+    PLAY_PARALLEL;                // 7
   }
   
 
@@ -41,6 +50,7 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
          */
         int channel = (int) args[1].value();
         String phrase = (String) args[2].value();
+        musicPlayer.setInstrument(channel, channelsToInstruments.getOrDefault(channel, 0));
         musicPlayer.playPhrase(channel, phraseFactory.constructMeasureListFromPhraseString(phrase));
         break;
       case MODULATE_PHRASE: // 2
@@ -60,14 +70,33 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
         String phraseToRepeat = (String) args[1].value();
         int nRepeats = (int) args[2].value();
         return new __string(phraseFactory.repeatPhrase(phraseToRepeat, nRepeats));
-      case PRINT_AVAILABLE_INSTRUMENTS:
+      case PRINT_AVAILABLE_INSTRUMENTS: // 5
         musicPlayer.printAllInstruments();
         break;
-      case SET_INSTRUMENT:
+      case SET_INSTRUMENT: // 6
         // Set a given midi channel (between 0-15) to an instrument (0-127)
         int channelIndex = (int) args[1].value();
         int instrument = (int) args[2].value();
-        musicPlayer.setInstrument(channelIndex, instrument);
+        channelsToInstruments.put(channelIndex, instrument);
+        break;
+      case PLAY_PARALLEL: // 7
+        /* Argument 1: the map */
+        System.out.println("Type of arg 1 is " + args[1].getClass());
+        Value map = args[1];
+        List<RunnablePlayer> threads;
+        if (map.value() instanceof HashMap<?, ?>) {
+          threads = new ArrayList<RunnablePlayer>(((HashMap<?, ?>) map.value()).size());
+          for (Map.Entry<?, ?> e : ((HashMap<?, ?>) map.value()).entrySet()) {
+            int key = (int) ((Value) e.getKey()).value();
+            String val = (String) ((Value) e.getValue()).value();
+            threads.add(
+              new RunnablePlayer(key, channelsToInstruments.getOrDefault(key, 0), val)
+            );
+          }
+          for (RunnablePlayer thread : threads) {
+            thread.run();
+          }
+        }
         break;
       default:
         return new __bottom();

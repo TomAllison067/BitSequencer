@@ -16,6 +16,7 @@ public class Note {
    * Modulate the note by n and return a new modulated Note instance
    */
   public Note modulate(int n) {
+    System.out.println("Modulating note " + this.getPitch());
     int shiftedKey = instance.getMidiKey(this.pitch) + n;
     return new Note(
       instance.getNoteFromMidiKey(shiftedKey)
