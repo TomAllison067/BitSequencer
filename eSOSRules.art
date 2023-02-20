@@ -106,6 +106,21 @@ _E1, _sig -> _I1, _sigP
 ---
 div(_E1, _E2), _sig -> div(_I1, _E2), _sigP
 
+-exp
+_n1 |> __int32(_) _n2 |> __int32(_)
+---
+exp(_n1, _n2), _sig -> __exp(_n1, _n2), _sig
+
+-expRight
+_n |> __int32(_) _E2, _sig -> _I2, _sigP
+---
+exp(_n, _E2), _sig -> exp(_n, _I2), _sigP
+
+-expLeft
+_E1, _sig -> _I1, _sigP
+---
+exp(_E1, _E2), _sig -> exp(_I1, _E2), _sigP
+
 // == RELATIONAL ==
 -gt
 _n1 |> __int32(_) _n2 |> __int32(_)
@@ -331,6 +346,7 @@ playConcurrent(_concChannelList), _sig -> playConcurrent(_concChannelListP), _si
 //!try mul(4, 5), __map
 //!try div(4, 5), __map
 //!try div(9, 5), __map
+!try exp(2, 8), __map
 //!try eq(1, 1), __map
 //!try ne(1, 1), __map
 //!try gt(1, 1), __map

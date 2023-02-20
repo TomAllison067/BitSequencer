@@ -3,152 +3,21 @@ Music
 A: Informal language specification
 =================================
 
-BeatSequencer allows the specification of musical phrases (collections of notes) and patterns (collections of phrases organised into tracks) which can be repeated and looped to compose whole pieces of music. A program requires the listing of tracks, and a track contains a user-specified label and an instrument. A pattern in the program will play musical phrases on the different instruments specified by the tracks.
-
-Every section can be thought of as an individual function, and so supports control flow. The prog section can be thought of as the "main" function.
+BeatSequencer allows the specification of musical phrases as lists of MIDI notes which can be:
+* Assigned to variables and dereferenced
+* Repeated
+* Concatenated to one another
+* Modulated
+* Played one at a time
+* Played concurrently with other phrases
 
 S.1 Programs
 ------------
-A BeatSequencer is divided into five sections, delimited by curly braces: prelude, tracks, phrases, patterns, and prog. Each section contains one or more statements or assignments, separated by the ; symbol.
-
-Prelude, tracks, phrases and patterns contain both musical definitions and meta-information about the program. The prog section contains additional program logic.
-
-
-S.1.1 Prelude section
----------------------
-
-The prelude section specifies global information about the program. In this section, the user specifies various key/value properties. All properties are optional (some have default values). Properties include:
-* artist: the composer of the composition.
-* program_author: the writer of the BeatSequencer program.
-* title: the title of the BeatSequencer program.
-* bpm (defaults to the integer 120 if not specified): the tempo of the program in beats per minute. This is a constant
-  property: future iterations may allow the bpm to change between phrases.
-* step_size (defaults to integer 4 if not specified): the smallest subdivision each beat will be subdivided in to,
-  and so the smallest note division the user can program. For example, with step_size 4, the smallest note value the
-  user can write will be 16th notes / semiquavers.
-
-For example:
-```
-prelude {
-  artist = "Eurythmics";
-  program_author = "Thomas Allison";
-  title = "Sweet Dreams (Are Made of This)";
-  bpm = 130;
-  step_size = 4; # How many 'grid steps' per beat you can write in: e.g., 4 will 
-                 # divide each beat into 4 semiquavers, and so each note and '=' extension
-                 # has the note value of one semiquaver. Minimum 1, maximum 64. 
-}
-```
-
-
-S.1.2 Tracks section
---------------------
-The tracks section enumerates a numbered list of tracks, each consisting of a user-specified track name, and the name of an instrument the track will play. Every pattern has knowledge of the tracks here, and will play musical phrases
-on the specified track.
-
-For example:
-
-```
-tracks {
-  # Map midi channels to tracks. A track is a tuple<trackname, instrument>.
-  # Tracks must be declared in a numerical order starting from 0: these will map to positions in the array
-  0: "drums", drums;
-  1: "synth1", synth;
-  2: "synth2", synth;
-}
-```
-
-
-S1.3 Phrases section
---------------------
-While in theory a user could enumerate a single list of notes for an entire composition, it's much easier to factor
-out common motifs into reusable components. The phrases section allows the user to specify named phrases
-which can be used throughout the remainder of the program.
-
-For example:
-
-```
-phrases { 
-  # 1 bar rest
-  restBar = [.] * 16;
-
-  # Defines a 4 bar phrase out of two repeated bars
-  bassline = ( 
-          [C2, .,  C2, .,  C3, ., C3, ., Eb3, ., Eb3, ., C3, ., C3, .]
-        + [Ab1, ., Ab1, ., Ab2, ., C3, ., G1, ., G1, ., Bb3, ., A3, .]
-         ) * 2
-
-  # 1 bar kick loop made out of four crotchets
-  kick_loop = [C1===, C1===, C1===, C1===];
-
-  # 1 bar kick snare loop, not sure what the java drum notes are: i've assumed "C1,D1" is kick + snare for example
-  kick_snare_loop = [C1===, {C1,D1}===, C1===, {C1,D1}===];
-}
-```
-
-Each named phrase is assigned a list of notes, where a list of notes has the form `[note1, note2, ...]`, with note names corresponding to MIDI note names (e.g. `C4` for middle C). The '.' symbol signifies a rest, and the '=' symbol extends a note's length by the step size. Lists of notes can be appended to each other with the '+' operator and repeated with the '*' operator. Chords can be specified using curly braces: notes inside curly braces will be played together.
-
-
-S1.4 Patterns section
----------------------
-The patterns section allows users to map phrases to tracks within a pattern. A pattern is an n-length array
-of phrases, where n is the number of tracks specified in the tracks section. A pattern can be thought of as a section
-of the composition.
-
-For example:
-
-```
-patterns {
-  4_bar_rest_pattern; 
-  for (int i = 0; i < length(4_bar_rest_pattern); i++) {
-    4_bar_rest_pattern[i] = restBar * 4;
-  };
-
-  bassline_intro;
-  bassline_intro[0] = kick_loop * 2 + kick_snare_loop * 2;
-  bassline_intro[1] = bassline;
-  bassline_intro[2] = [G2, ., G2=, C4,C4,C4,C4] * 8,
-
-  vocal_intro;
-  vocal_intro[0] = ...
-  bridge;
-  bridge[0] = ...
-  chorus;
-  chorus = ...
-  
-  sweetDreams = bassline_intro + vocal_intro + (verse + bridge + chorus) * 2;
-}
-
-```
-
-Patterns can be appended to each other and repeated with '+' and '*' operators. A pattern's length will
-be the length of the longest phrase in the pattern, and any shorter phrases in a pattern will be padded with rests.
-
-
-S1.5 Prog section
------------------
-The prog section corresponds to the 'main' function of, say, a C or Java program. Here is where the user should
-specify which patterns to play. The user can also modify existing patterns using control flow constructs and assignment.
-
-For example, the following program modifies the song by adding a crash symbol to the drum track every 16 steps (4 crotchets) of each pattern, and then plays the song:
-
-```
-prog {
-  int drumChannel = 0;
-  int beatsPerBar = 16;
-
-  while( i < length(composition) {
-    composition[drumChannel][i * beatsPerBar] = {C, X};
-    i = i + 4;
-  }
-    play(sweetDreams);
-}
-```
 
 
 S.2 Arithmetic and expressions
 ------------------------------
-BeatSequencer allows standard integer arithmetic. The operations supported are addition, multiplication, subtraction.
+BeatSequencer allows standard integer arithmetic. The operations supported are addition, subtraction, multiplication, division and exponentiation.
 
 Non-keyword alphanumeric identifiers denote variables that may have integers bound to them.
 
