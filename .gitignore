@@ -1,3 +1,4 @@
 *.class
 artSpecification.*
 ARTGeneratedParser.java
+.vscode

@@ -1,6 +1,0 @@
-{
-  "java.project.referencedLibraries": [
-    "lib/**/*.jar",
-    "/home/tom/rhul/cs3480 - SLE/SLELabs/art.jar"
-  ]
-}
