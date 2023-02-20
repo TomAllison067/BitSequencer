@@ -1,143 +1,26 @@
-This directory contains the source files for a MINIATURE version of the project.
+Welcome to BeatSequencer!
 
---- GOALS ---
+== Introduction ==
+BeatSequencer is a music DSL that allows users to program both monophonic and polyphonic patterns and play them
+back using the Java MIDI subsystem.
 
-The language here is a version of the GCD language extended with a
-backend constructor that connects to ValueUserPlugin.user()
+A pattern is represented by a string, and takes the following form:
+"[C4:4, E4:4, G4:4, .:4, {G4-B4-D4}:4, .:4, {C4-E4-G4}:4, .:4]"
 
-The object is to demonstrate these core activities:
+A phrase begins and ends with opening/closing square brackets, and inside the brackets is a comma-delimited list of notes/measures.
 
-A. Writing eSOS rules and interpreting them
+The first part of a single note, before the colon, is the MIDI note name. The second part, after the colon, represents the subdivision of the note. For example,
+"C4:4" represents the pitch C4 (middle C, midi note 60) played for one crotchet (quarter note). A quaver/eighth note would be represented by "C4:8".
 
-B. Connecting eSOS to the TEXT and JavaFX plugins
+Chords are written by enclosing notes delimited by a `-` symbol inside curly braces, and the subdivision of the chord is added with a colon and number after 
+the last curly brace. So, "{G4-B4-D4}:4" plays a crotchet-length (quarter note) chord consisting of notes G4, B4 and D4 (a G major chord).
 
-C. Writing a grammar that parses from external syntax to an internal syntax
-   suitable for use with eSOS
+== How to run the eSOS rules ==
+From the root directory of the project, run `scripts/build.sh` to compile the Java backend classes and `scripts/art.sh eSOSRules.art` to interpret the !try
+directives.
 
-D. Writing an attribute grammar to directly interpret the external
-syntax, and connecting from attribute grammars to plugins.
-
-Important note:
-
- these examples are deliberately minimal. Your project languages should be
- significantly richer than the language shown here.
-
---- IF YOU ARE RUNNING ON Un*x ---
-
-The instructions below are for running the demonstrations on
-Windows. If you are running on Un*x:
-
-1. You will need to use commands of the form ./script.sh,
-2. Please replace copy commands with cp and replace type commnds with cat.
-3. Remember that Un*x is case-sensitive.
-4. You may need to run chmod +x on each .sh file to make the scripts executable
-5. You may need to run dos2unix on each .sh file to convert to Un*x line ends
-
---- INSTRUCTIONS FOR RUNNING EXAMPLES ---
-
-1. For the JavaFX examples, you need to locate the module path to your
-Java FX modules. On my system it is c:\openJFX\javafx-sdk-14.0.2.1\lib
-
-Edit the files 
-
-\SLELabs\project\buildplugin.bat 
-
-and 
-
-\SLELabs\artfx.bat
-
-and change my module path to your module path
-
-2. Run eSOS without a local plugin
-
-> ..\art eSOS_PiM.art
-
-...
-
-Step 55
-  [sequenceDone] rewrites to <backend(__int32(1), __int32(2), __int32(3)), {a=__int32(3), gcd=__int32(3), b=__int32(3)}>
-Step 56
-Default ValueUserPlugin called with these arguments
-__int32(1) which has underlying Java class java.lang.Integer and value 1
-__int32(2) which has underlying Java class java.lang.Integer and value 2
-__int32(3) which has underlying Java class java.lang.Integer and value 3
-  [backend] rewrites to <__string(Adrian)>
-
-3. Copy the example text plugin to ValueUserPlugin.java and compile
-
->  copy ValueUserPlugin_TEXT.java ValueUserPlugin.java
->  buildPlugin.bat
-
-4. Run eSOS with the compiled text plugin
-
-> ..\art eSOS_PiM.art
-
-...
-
-Step 56
-  Rewrite call 234 backend(1, 17, 3), {gcd=3, b=3, a=3}  ->
-  -backend  --- backend(_P1, _P2, _P3), _sig -> __user(_P1, _P2, _P3)
-__int32(1) which has underlying Java class java.lang.Integer and value 1
-__int32(17) which has underlying Java class java.lang.Integer and value 17
-__int32(3) which has underlying Java class java.lang.Integer and value 3
-  -backend rewrites to "Return value from text example plugin"
-  
-5. Copy the example Java FX plugin to VAlueUserPlugin.java and compile
-
->  copy ValueUserPlugin_FX.java ValueUserPlugin.java
->  buildPlugin.bat
-
-6. Run eSOS with the compiled Java FX plugin using the artfx script. 
-
-> ..\artfx eSOS_PiM.art
-
-...
-
-Step 56
-  Rewrite call 234 backend(1, 17, 3), {gcd=3, b=3, a=3}  ->
-  -backend  --- backend(_P1, _P2, _P3), _sig -> __user(_P1, _P2, _P3)
-  -backend rewrites to "Return value from JavaFX example plugin"
-  
-... and a JavaFX window opens displaying __int32(1)
-
-7. Clean up (which removes the compiled ValueUserPlugin)
-
->  clean
-
-8. Build a term
-
->  parse ExtToInt_PiM +showAll
-
-9. Look at the term
-
->  type term.txt
-
-seq(assign(a, 15), seq(seq(seq(assign(b, 9), while(ne(deref(a), deref(b)), if(gt(deref(a), deref(b)), assign(a, sub(deref(a), deref(b))), assign(b, sub(deref(b), deref(a)))))), assign(gcd, deref(a))), backend(1, 2, 3)))
-
-10. Build and run the Java-native attribute grammar
-
->  parse.bat Attribute_PiM
-
-** Accept
-Default ValueUserPlugin called with 3 arguments
-__int32(1) which has underlying Java class java.lang.Integer and value: 1
-__int32(17) which has underlying Java class java.lang.Integer and value: 17
-__int32(3) which has underlying Java class java.lang.Integer and value: 3
-Variables at end of program: {a=3, b=3, gcd=3}
-
-11. Build and run the Value attribute grammar
-
->  parse AttributeValue_PiM
-
-** Accept
-Default ValueUserPlugin called with 3 arguments
-__int32(1) which has underlying Java class java.lang.Integer and value: 1
-__int32(17) which has underlying Java class java.lang.Integer and value: 17
-__int32(3) which has underlying Java class java.lang.Integer and value: 3
-Variables at end of program: __map(__binding(__string("a"), __int32(3)),__binding(__string("b"), __int32(3)),__binding(__string("gcd"), __int32(3)))
-
-12. Build and run the Java-native attribute grammar with a JavaFX backend
-
-> copy ValueUserPlugin_FX.java ValueUserPlugin.java
-> buildPlugin.bat
-> parseFX Attribute_PiM
+All the !try directives should work as expected, but they've all been commented out aside from the last three (which are the most interesting):
+* One plays an excerpt of Sweet Dreams by Eurythmics with three instruments by playing three patterns concurrently.
+* One plays a rhythmic scale, repeating notes starting breves, semibreves, and dividing into eventually into 64th notes. This is to test that note durations
+  have been properly implemented.
+* One plays all of the MIDI notes available to BeatSequencer, ranging from 21 (A0) to 127 (G9), repeating notes where sharps and flats overlap.

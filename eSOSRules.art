@@ -391,11 +391,11 @@ playConcurrent(_concChannelList), _sig -> playConcurrent(_concChannelListP), _si
     )))))), __map
 
 // Test rhythmic scale
-//!try seq(setBpm(120),
-//  play(1, concat(
-//    concat("[C4:1, C4:2, C4:2, C4:4, C4:4, C4:4, C4:4, C4:8, C4:8, C4:8, C4:8, C4:8, C4:8, C4:8, C4:8]", repeat("[C4:16]", 15)),
-//    concat(repeat("[C4:32]", 31), repeat("[C4:64]", 63)))
-//    )), __map
+!try seq(setBpm(120),
+  play(1, concat(
+    concat("[C4:1, C4:2, C4:2, C4:4, C4:4, C4:4, C4:4, C4:8, C4:8, C4:8, C4:8, C4:8, C4:8, C4:8, C4:8]", repeat("[C4:16]", 15)),
+    concat(repeat("[C4:32]", 31), repeat("[C4:64]", 63)))
+    )), __map
 
 // Test MIDI note range
 !try seq( assign(x, "[A0:16, A#0:16, Bb0:16, B0:16, C0:16, C#0:16, Db0:16, D0:16, D#0:16, Eb0:16, E0:16, F0:16, F#0:16, Gb0:16, G0:16, G#0:16, Ab0:16]"), seq( assign(i, 0), while( ne(deref(i), 10), seq( setChannelInstrument(1, 47), seq(play(1, modulate(deref(x), mul(deref(i), 12))), assign(i, add(deref(i), 1)) )) ) ) ), __map
