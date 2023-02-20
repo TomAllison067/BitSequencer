@@ -1,4 +1,4 @@
-package MidiPlayer;
+package BeatSequencer;
 
 public class Note {
   private String pitch;

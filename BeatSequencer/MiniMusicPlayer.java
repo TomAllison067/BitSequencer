@@ -1,4 +1,4 @@
-package MidiPlayer;
+package BeatSequencer;
 
 import javax.sound.midi.Instrument;
 import javax.sound.midi.MidiChannel;
@@ -45,7 +45,7 @@ public class MiniMusicPlayer {
     setBeatRatio(0.9);
     setBpm(100);
     setDefaultVelocity(100);
-    rest(1, 4);
+    rest(1, 2);
   }
 
   public Synthesizer getSynthesizer() {

@@ -1,4 +1,4 @@
-package MidiPlayer;
+package BeatSequencer;
 
 import java.util.ArrayList;
 import java.util.List;

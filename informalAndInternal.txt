@@ -1,112 +1,350 @@
-Instructions from AJ:
-
-This is a template and example for you to use when defining your informal specification
-and the signatures of the types and operations you think you will need.
-
-Please replace instances of PiM with the name of your language and extend the sections to
-suit your real, non-miniature, language.
-
-
-
+Music
 
 A: Informal language specification
-==================================
+=================================
 
-The language PiM can perform simple arithmetic and call a back end function.
+BeatSequencer allows the specification of musical phrases (collections of notes) and patterns (collections of phrases organised into tracks) which can be repeated and looped to compose whole pieces of music. A program requires the listing of tracks, and a track contains a user-specified label and an instrument. A pattern in the program will play musical phrases on the different instruments specified by the tracks.
+
+Every section can be thought of as an individual function, and so supports control flow. The prog section can be thought of as the "main" function.
 
 S.1 Programs
 ------------
+A BeatSequencer is divided into five sections, delimited by curly braces: prelude, tracks, phrases, patterns, and prog. Each section contains one or more statements or assignments, separated by the ; symbol.
 
-A PiM program is one or more statements
+Prelude, tracks, phrases and patterns contain both musical definitions and meta-information about the program. The prog section contains additional program logic.
 
-Statements are separated by the ; and-also operator. There is no statement terminator.
 
-A sequence of whitespace characters can be used wherever one whitespace is valid.
+S.1.1 Prelude section
+---------------------
+
+The prelude section specifies global information about the program. In this section, the user specifies various key/value properties. All properties are optional (some have default values). Properties include:
+* artist: the composer of the composition.
+* program_author: the writer of the BeatSequencer program.
+* title: the title of the BeatSequencer program.
+* bpm (defaults to the integer 120 if not specified): the tempo of the program in beats per minute. This is a constant
+  property: future iterations may allow the bpm to change between phrases.
+* step_size (defaults to integer 4 if not specified): the smallest subdivision each beat will be subdivided in to,
+  and so the smallest note division the user can program. For example, with step_size 4, the smallest note value the
+  user can write will be 16th notes / semiquavers.
+
+For example:
+```
+prelude {
+  artist = "Eurythmics";
+  program_author = "Thomas Allison";
+  title = "Sweet Dreams (Are Made of This)";
+  bpm = 130;
+  step_size = 4; # How many 'grid steps' per beat you can write in: e.g., 4 will 
+                 # divide each beat into 4 semiquavers, and so each note and '=' extension
+                 # has the note value of one semiquaver. Minimum 1, maximum 64. 
+}
+```
+
+
+S.1.2 Tracks section
+--------------------
+The tracks section enumerates a numbered list of tracks, each consisting of a user-specified track name, and the name of an instrument the track will play. Every pattern has knowledge of the tracks here, and will play musical phrases
+on the specified track.
+
+For example:
+
+```
+tracks {
+  # Map midi channels to tracks. A track is a tuple<trackname, instrument>.
+  # Tracks must be declared in a numerical order starting from 0: these will map to positions in the array
+  0: "drums", drums;
+  1: "synth1", synth;
+  2: "synth2", synth;
+}
+```
+
+
+S1.3 Phrases section
+--------------------
+While in theory a user could enumerate a single list of notes for an entire composition, it's much easier to factor
+out common motifs into reusable components. The phrases section allows the user to specify named phrases
+which can be used throughout the remainder of the program.
+
+For example:
+
+```
+phrases { 
+  # 1 bar rest
+  restBar = [.] * 16;
+
+  # Defines a 4 bar phrase out of two repeated bars
+  bassline = ( 
+          [C2, .,  C2, .,  C3, ., C3, ., Eb3, ., Eb3, ., C3, ., C3, .]
+        + [Ab1, ., Ab1, ., Ab2, ., C3, ., G1, ., G1, ., Bb3, ., A3, .]
+         ) * 2
+
+  # 1 bar kick loop made out of four crotchets
+  kick_loop = [C1===, C1===, C1===, C1===];
+
+  # 1 bar kick snare loop, not sure what the java drum notes are: i've assumed "C1,D1" is kick + snare for example
+  kick_snare_loop = [C1===, {C1,D1}===, C1===, {C1,D1}===];
+}
+```
+
+Each named phrase is assigned a list of notes, where a list of notes has the form `[note1, note2, ...]`, with note names corresponding to MIDI note names (e.g. `C4` for middle C). The '.' symbol signifies a rest, and the '=' symbol extends a note's length by the step size. Lists of notes can be appended to each other with the '+' operator and repeated with the '*' operator. Chords can be specified using curly braces: notes inside curly braces will be played together.
+
+
+S1.4 Patterns section
+---------------------
+The patterns section allows users to map phrases to tracks within a pattern. A pattern is an n-length array
+of phrases, where n is the number of tracks specified in the tracks section. A pattern can be thought of as a section
+of the composition.
+
+For example:
+
+```
+patterns {
+  4_bar_rest_pattern; 
+  for (int i = 0; i < length(4_bar_rest_pattern); i++) {
+    4_bar_rest_pattern[i] = restBar * 4;
+  };
+
+  bassline_intro;
+  bassline_intro[0] = kick_loop * 2 + kick_snare_loop * 2;
+  bassline_intro[1] = bassline;
+  bassline_intro[2] = [G2, ., G2=, C4,C4,C4,C4] * 8,
+
+  vocal_intro;
+  vocal_intro[0] = ...
+  bridge;
+  bridge[0] = ...
+  chorus;
+  chorus = ...
+  
+  sweetDreams = bassline_intro + vocal_intro + (verse + bridge + chorus) * 2;
+}
+
+```
+
+Patterns can be appended to each other and repeated with '+' and '*' operators. A pattern's length will
+be the length of the longest phrase in the pattern, and any shorter phrases in a pattern will be padded with rests.
+
+
+S1.5 Prog section
+-----------------
+The prog section corresponds to the 'main' function of, say, a C or Java program. Here is where the user should
+specify which patterns to play. The user can also modify existing patterns using control flow constructs and assignment.
+
+For example, the following program modifies the song by adding a crash symbol to the drum track every 16 steps (4 crotchets) of each pattern, and then plays the song:
+
+```
+prog {
+  int drumChannel = 0;
+  int beatsPerBar = 16;
+
+  while( i < length(composition) {
+    composition[drumChannel][i * beatsPerBar] = {C, X};
+    i = i + 4;
+  }
+    play(sweetDreams);
+}
+```
 
 
 S.2 Arithmetic and expressions
 ------------------------------
-
-PiM has only 32-bit integer arithmetic
+BeatSequencer allows standard integer arithmetic. The operations supported are addition, multiplication, subtraction.
 
 Non-keyword alphanumeric identifiers denote variables that may have integers bound to them.
-
-The only operations provided are subtraction over constant integers and variables such as  $x-y$, $x-3$ or $3-4$ 
 
 
 S.3 Predicates
 --------------
-
-PiM allows comparison of 32-bit integers using relational operators that return a boolean result
-
-x > y 		x greater than y
-
-x != y  	x not equal to y
+BeatSequencer allows comparison of integers using relational operators that return a boolean result:
+x > y       x greater than y
+x < y       x less than y
+x >= y      x greater than or equal to y
+x <= y      x less than or equal to y
+x != y      x not equal to y
+x == y      x equal to y
 
 
 S.4 Selection statements
 ------------------------
 
-PiM provides two selection statements
+BeatSequencer provides two selection statements:
 
 if _pred then _statement else _statement
-
 if _pred then _statement
 
-where _pred is a predicate as defined in section S.3, and _statement is any statement
+where _pred is a predicate as defined in section S.3, and _statement is any statement.
 
 
 S.5 Iteration statements
 ------------------------
-
-PiM provides one iteration statement
+BeatSequencer provides one iteration statement:
 
 while _pred do _statement
 
-where _pred is a predicate as defined in section S.4, and _statement is any statement
+where _pred is a predicate as defined in section S.3, and _statement is any statement.
 
 
 S.6 Domain specific types
 -------------------------
+BeatSequencer has the following domain specific types:
 
-PiM has no domain specific types
+Phrase - a comma-delimited list of notes to be played in order written inside square brackets, 
+         assignable to an identifier. Phrases can be appended or repeated with '+' or '*' operators.
+    E.g:
+        twoBarKickLoop = [C:4:4, C4:4:4, C4:4:4, C4:4:4] * 2
+        oneBarRest = [.:.:16] * 16
+        cMajorScale = [C:4:8, D:4:8, E:4:8, F:4:8, G:4:8, A:4:8, B:4:8, C:4:8]
+
+Pattern - a list of phrases to be played at the same time
+    E.g:
+        bassline_intro;
+        bassline_intro[0] = kick_loop * 2 + kick_snare_loop * 2;
+        bassline_intro[1] = bassline;
+        4_bar_rest_pattern;
+        for (int i = 0; i < length(4_bar_rest_pattern); i++) {
+            4_bar_rest_pattern[i] = restBar * 4;
+        };
+
+Track - A track has an integer numerical identifier, a user-specifiable name, and the name of the instrument
+        the track will play. 
+    E.g:
+        0: "drums", drums;
+        1: "synth1", synth;
+        2: "synth2", synth;
 
 
 S.7 Domain specific operations
 ------------------------------
+BeatSequencer provides concatenation and repetition for notes, phrases, and patterns. In this context, the '+' symbol acts as the concatenation operator
+and the '*' as the repetition operator.
 
-PiM provides one DSL-type statement
+'+' acts as follows:
+    phrase1 + phrase2: returns a single new phrase that is the concatenation of phrase1 and phrase2, e.g. [C:4:8, D5==] + [E4, {C,E,G}=] returns [C4, D5==, E4, {C,E,G}=]
+    pattern1 + pattern2: returns a new pattern where for each index i, phrases pattern1[i] and pattern2[i] are concatenated, e.g. phattern3[i] = pattern1[i] (a phrase) concatenated with pattern2[i] (another phrase)
+    
+'*' acts as follows:
+    note1 * k: returns a new phrase consisting of k instances of note1, e.g. C4 * 4 returns [C4, C4, C4, C4]
+    phrase1 * k: returns a new phrase consisting of k instances of phrase1 concatenated, e.g. [C4, D5==] * 2 = [C4, D5==, C4, D5==]
+    pattern1 * k: returns a new pattern where for each index i, the phrase pattern1[i] is repeated as per repetition for phrases
 
-backend(_v1:int, _v2:int, _v3:int):int
+Signatures for the operations above (also found in section B):
+    concat(_a:Note, _b:Note):Note
+    concat(_a:Phrase, _b:Phrase):Phrase
+    concat(_a:Pattern, _b:Pattern):Pattern
+    
+    repeat(_a:Note, _x:__int32):Phrase
+    repeat(_a:Phrase, _x:__int32):Phrase
+    repeat(_a:Pattern, _x:__int32):Pattern
+
+
+BeatSequencer also provides one DSL-type statement
+
+    backend(_v1:int, _v2:int, _v3:int):int
 
 where v1, v2 and v3 are integer expressions. 
 
 This statement then activates the corresponding method in class ValueUserPlugin via the __user() function in the ART value system.
 
-The behaviour depends on the code implemented in that class. 
-
-
+The behaviour depends on the code implemented in that class (TODO).
 
 
 B: Internal syntax constructors and arities
 ===========================================
 
-seq(_C1, _C2) execute command  C_1 followed by command C_2
+Constructors for domain-specific types
+--------------------------------------
+InstrumentTrack(_channel_id:__int32, _trackName:__string, _instrument:__string):InstrumentTrack
+Create a new instrument track with id _channel_id, human-readable name _trackName, playing instrument _instrument.
+
+Note(_pitch:__string, _length:__int32):Note
+Create a new note which should play pitch _pitch for the equivalenth of _length semiquavers,
+e.g. note("Ab", 4) represents an Ab with crotchet length.
+
+Phrase(_notes:__list, _length:__int32):Phrase
+A phrase is an constructed from an ordered list of notes. Evaluate _length to be the sum of the lengths of notes in the list.
+
+Pattern(__channels:__int32, __phrases:__array):Pattern
+A pattern consists of an array of phrases, with each array index corresponding to the numerical ID
+of an instrument track (the corresponding track will play the phrase). The interpreter will enforce
+that all phrases belonging to a pattern are the same length, otherwise the pattern is illegal.
+
+
+Basic primitives
+----------------
+int(_int:__int32)
+A basic integer type
+
+String(_string:__string)
+Basic String type
+
+
+Operations, syntax, arities
+---------------------------
+assign(_name: String, _a:Object)
+Assign variable _a to name _name in the store. Works over all basic primitives and domain-specific types.
+
+add(_E1:__int32, _E2:__int32):__int32 integer addition: E_1 + E_2
 
 sub(_E1:__int32, _E2:__int32):__int32 integer subtraction: E_1 - E_2
 
+mult(_E1:__int32, _E2:__int32):__int32 integer addition: E_1 * E_2
+
+div(_E1:__int32, E2:__inte3):__int32 integer floor division: E1 /E2
+
 gt(_E1:__int32, _E2:__int32):__boolean integer greater-than E_1 > E_2
+
+ge(_E1:__int32, _E2:__int32):__boolean integer greater-than or equal E_1 >= E_2
+
+lt(_E1:__int32, _E2:__int32):__boolean integer lesser-than E_1 < E_2
+
+le(_E1:__int32, _E2:__int32):__boolean integer lesser-than or equal E_1 <= E_2
 
 ne(_E1:__int32, _E2:__int32):__boolean integer not-equals E_1 ne E_2
 
-assign(_N:__int32, _E:__int32) bind _E to name _N in variables map
+eq(_E1:__int32, _E2:__int32):__bolean integer equality E1 equals E2
 
 deref(_N)) retrieve binding for name _N in variables map
 
-if(_P:__bool, _C1, _C2) select if _P then execute C_2 else execute C_3
+concat(_a:Note, _b:Note):Note
+Return a new phrase that is the concatenation of two notes _a and _b.
 
-while(_P:__bool, _C1, _C2) iterate while _P then execute C_2 else execute C_3
+concat(_a:Phrase, _b:Phrase):Phrase
+Return a new phrase that is the concatenation of phrase _a and _b_.
 
-backend(_V1, _V2, _V3) call __user(_V1, _V2, _V3)
+concat(_a:Pattern, _b:Pattern):Pattern
+Return a new Pattern consisting of the phrases in each channel of pattern _a concatenated with their corresponding phrases in pattern _b.concat(_a:Note, _b:Note):Note
 
-Note: also add signatures for every domains specific primitive, such as box(_x:real64, _y:real64, _z:real64)
+repeat(_a:Note, _x:__int32):Phrase
+Construct a new phrase by concatenating _x instances of _a together.
+ 
+repeat(_a:Phrase, _x:__int32):Phrase
+Construct a new phrase from phrase _a by concatenating _x instances of _a together.
+
+repeat(_a:Pattern, _x:__int32):Pattern
+Construct a new pattern from pattern _a by concatenating _x instances of _a together.
+
+increment(_note: Note, _step:__int32):Note
+Returns a new Note with the pitch incremented by _step semitones (or decremented if given a negative number).
+Note, this creates and returns a new Note instance rather than changing the pitch of the provided _note instance.
+
+length(_phrase:Phrase):__int32
+Return the length (in semiquavers) of the given phrase, i.e. the sum of all notes in this phrase.
+
+length(_note:Note):__int32
+Return the length (in semiquavers) of the given note.
+
+length(_pattern:Pattern):__int32
+Return the length (in semiquavers) of the given pattern. The interpreter should enforce that each phrase in the
+pattern is indeed the same length, otherwise the pattern is illegal (and this operation is undefined).
+
+play(_pattern:Pattern)
+Call the Java MIDI system to play the tracks in the given pattern.
+
+seq(_S1, _S2)
+Execute _S1, followed by _S2.
+
+if(_P:__bool, _S1, _S2)
+Selection, if _P evaluates to true then execute _S1, else execute _S2
+
+while(_P:__bool, _C1, _C2)
+Iteration, while _P is true execute _S1, else execute _S2
