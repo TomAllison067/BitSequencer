@@ -13,9 +13,9 @@ BeatSequencer allows the specification of musical phrases as lists of MIDI notes
 
 S.1 Programs
 ------------
-A BeatSequencer program is one or more statements
+A BeatSequencer program consists of one or more statements in which phrases can be constructed, assigned, and played.
 
-Statements are separated by the ; and-also operator. There is no statement terminator.
+Statements are separated by the ; operator. There is no statement terminator.
 
 A sequence of whitespace characters can be used wherever one whitespace is valid.
 
