@@ -1,2 +1,1 @@
-* update internal syntax
-* test if/control flow
+* Check argument type for terms in internal syntax: is it __quote?
