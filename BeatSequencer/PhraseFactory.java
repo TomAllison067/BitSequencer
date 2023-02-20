@@ -25,7 +25,7 @@ public class PhraseFactory {
     List<Note> notes = new ArrayList<Note>();
     if (component.startsWith("{") && component.endsWith("}")) {
       /* Case 1: chords */
-      String[] noteStrings = component.substring(1, component.length() - 1).split("-");
+      String[] noteStrings = component.substring(1, component.length() - 1).split(CHORD_NOTE_SEPARATOR);
       for (String noteString : noteStrings) {
         notes.add(new Note(noteString));
       }
