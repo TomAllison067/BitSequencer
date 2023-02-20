@@ -45,6 +45,7 @@ public class MiniMusicPlayer {
     setBeatRatio(0.9);
     setBpm(100);
     setDefaultVelocity(100);
+    rest(1, 4);
   }
 
   public Synthesizer getSynthesizer() {

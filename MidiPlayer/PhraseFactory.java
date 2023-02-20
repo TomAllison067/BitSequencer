@@ -15,7 +15,6 @@ public class PhraseFactory {
     for (String note : phraseStringArray) {
       String[] components = note.split(":");
       int length = Integer.parseInt(components[1]);
-      System.out.println("constructMeasureListFromPhraseString: note length is " + length);
       phrase.add(new Measure(
         parseComponentToNote(components[0]), length));
     }
@@ -23,18 +22,15 @@ public class PhraseFactory {
   }
 
   public List<Note> parseComponentToNote(String component) {
-    System.out.println("parseComponentToString: " + component);
     List<Note> notes = new ArrayList<Note>();
     if (component.startsWith("{") && component.endsWith("}")) {
       /* Case 1: chords */
       String[] noteStrings = component.substring(1, component.length() - 1).split("-");
       for (String noteString : noteStrings) {
-        System.out.println("parseComponentToString: note is " + noteString);
         notes.add(new Note(noteString));
       }
     } else {
       /* Case 2: Single notes */
-      System.out.println("parseComponentToString: note is " + component);
       notes.add(new Note(component));
     } 
     return notes;
