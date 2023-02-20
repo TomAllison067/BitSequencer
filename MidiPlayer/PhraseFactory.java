@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PhraseFactory {
-  private final String SEPARATOR = ", ";
+  private final String MEASURE_SEPARATOR = ", ";
+  private final String CHORD_NOTE_SEPERATOR = "-";
 
   public List<Measure> constructMeasureListFromPhraseString(String phraseString) {
     System.out.println("constructMeasureListFromPhraseString: " + phraseString);
@@ -66,14 +67,16 @@ public class PhraseFactory {
         separator = "";
         sb.append("{");
         for (Note note : measure.getNotes()) {
-          sb.append(separator + note.getPitch() + ":" + measure.getLength());
-          separator = SEPARATOR;
+          sb.append(separator + note.getPitch());
+          separator = CHORD_NOTE_SEPERATOR;
         }
         sb.append("}");
+        sb.append(":" + measure.getLength());
+        separator = MEASURE_SEPARATOR;
       } else {
         for (Note note : measure.getNotes()) {
           sb.append(separator + note.getPitch() + ":" + measure.getLength());
-          separator = SEPARATOR;
+          separator = MEASURE_SEPARATOR;
         }
       }
     }
@@ -88,7 +91,7 @@ public class PhraseFactory {
     String phrase1prefix = phrase1.substring(0, phrase1.length() - 1);
     String phrase2suffix = phrase2.substring(1);
     StringBuilder concatenated = new StringBuilder(phrase1prefix);
-    concatenated.append(SEPARATOR);
+    concatenated.append(MEASURE_SEPARATOR);
     concatenated.append(phrase2suffix);
     return concatenated.toString();
   }

@@ -14,10 +14,16 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
   private MiniMusicPlayer musicPlayer = new MiniMusicPlayer();
   private PhraseFactory phraseFactory = new PhraseFactory();
   
+  /* Beats per minute, defaults to 120. Set with `SET_BPM` */
   private int bpm = 120;
 
+  /* Map of midi channels to instrument numbers. Set with `SET_INSTRUMENT` */
   private Map<Integer, Integer> channelsToInstruments = new HashMap<Integer, Integer>();
   
+  /* Maps midi channels to phrases. Set with `LOAD_CONCURRENT` and cleared after played
+   * by `PLAY_CONCURRENT` */
+  private Map<Integer, String> concurrentChannels = new HashMap<Integer, String>();
+
   enum OpCode {
     SET_BPM,                      // 0
     PLAY_PHRASE,                  // 1    
@@ -26,7 +32,8 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
     REPEAT_PHRASE,                // 4
     PRINT_AVAILABLE_INSTRUMENTS,  // 5
     SET_INSTRUMENT,               // 6
-    PLAY_PARALLEL;                // 7
+    LOAD_CONCURRENT,              // 7
+    PLAY_CONCURRENT;              // 8
   }
   
 
@@ -82,31 +89,32 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
         int instrument = (int) args[2].value();
         channelsToInstruments.put(channelIndex, instrument);
         break;
-      case PLAY_PARALLEL: // 7
-        /* Argument 1: the map */
+      case LOAD_CONCURRENT: // 7
+        /* Argument 1: midi channel, argument 2: phrase */
+        System.out.println("Loading concurrent channel " + args[1].value().toString() + " with phrase " + args[2].value().toString());
+        concurrentChannels.put((Integer) args[1].value(), (String) args[2].value());
+        break;
+      case PLAY_CONCURRENT: // 8
+        System.out.println("Playing concurrent channels");
         try {
-          System.out.println("Type of arg 1 is " + args[1].getClass());
-          Value map = args[1];
-          List<Thread> threads;
-          if (map.value() instanceof HashMap<?, ?>) {
-            threads = new ArrayList<Thread>(((HashMap<?, ?>) map.value()).size());
-            for (Map.Entry<?, ?> e : ((HashMap<?, ?>) map.value()).entrySet()) {
-              int key = (int) ((Value) e.getKey()).value();
-              String val = (String) ((Value) e.getValue()).value();
-              threads.add(
-                new Thread(new RunnablePlayer(key, channelsToInstruments.getOrDefault(key, 0), val, this.bpm))
-              );
-            }
-            for (Thread thread : threads) {
-              thread.start();
-            }
-            for (Thread thread : threads) {
-              thread.join();
-            }
+          List<Thread> threads = new ArrayList<Thread>(concurrentChannels.size());
+          for (Map.Entry<Integer, String> e : concurrentChannels.entrySet()) {
+            threads.add(
+              new Thread(
+                new RunnablePlayer(e.getKey(), channelsToInstruments.getOrDefault(e.getKey(), 0), e.getValue(), this.bpm)
+              )
+            );
           }
-      } catch (InterruptedException e) {
-        /* ignore  */
-      }
+          for (Thread thread : threads) {
+            thread.start();
+          }
+          for (Thread thread : threads) {
+            thread.join();
+          }
+        } catch (InterruptedException e) {
+          /* ignore  */
+        }
+        concurrentChannels.clear();
         break;
       default:
         return new __bottom();

@@ -145,6 +145,7 @@ public class MiniMusicPlayer {
   }
 
   public void playNotes(int channel, List<Note> notes, int length) {
+    System.out.println("Bpm: " + bpm);
     try {
       for (Note note : notes) {
         if (!note.isRest()) {
