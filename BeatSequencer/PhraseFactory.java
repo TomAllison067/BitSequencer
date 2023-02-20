@@ -5,7 +5,7 @@ import java.util.List;
 
 public class PhraseFactory {
   private final String MEASURE_SEPARATOR = ", ";
-  private final String CHORD_NOTE_SEPERATOR = "-";
+  private final String CHORD_NOTE_SEPARATOR = "/";
 
   public List<Measure> constructMeasureListFromPhraseString(String phraseString) {
     System.out.println("constructMeasureListFromPhraseString: " + phraseString);
@@ -64,7 +64,7 @@ public class PhraseFactory {
         sb.append("{");
         for (Note note : measure.getNotes()) {
           sb.append(separator + note.getPitch());
-          separator = CHORD_NOTE_SEPERATOR;
+          separator = CHORD_NOTE_SEPARATOR;
         }
         sb.append("}");
         sb.append(":" + measure.getSubdivision());
