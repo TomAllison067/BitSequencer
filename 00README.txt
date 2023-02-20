@@ -12,7 +12,7 @@ A phrase begins and ends with opening/closing square brackets, and inside the br
 The first part of a single note, before the colon, is the MIDI note name. The second part, after the colon, represents the subdivision of the note. For example,
 "C4:4" represents the pitch C4 (middle C, midi note 60) played for one crotchet (quarter note). A quaver/eighth note would be represented by "C4:8".
 
-Chords are written by enclosing notes delimited by a `-` symbol inside curly braces, and the subdivision of the chord is added with a colon and number after 
+Chords are written by enclosing notes delimited by a `/` symbol inside curly braces, and the subdivision of the chord is added with a colon and number after 
 the last curly brace. So, "{G4/B4/D4}:4" plays a crotchet-length (quarter note) chord consisting of notes G4, B4 and D4 (a G major chord).
 
 == How to run the eSOS rules ==
