@@ -4,4 +4,5 @@ Scripts to build the plugin and interpret the eSOS rules. Run these from the top
 ```bash
 $ scripts/buildPlugin.sh
 $ scripts/art.sh eSOSRules.art
+$ scripts/clean.sh
 ```
