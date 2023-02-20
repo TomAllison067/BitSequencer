@@ -1,5 +1,7 @@
 Welcome to BeatSequencer!
 
+The backend compiles on the university linux server with `scripts/buildplugin.sh` (and other unix systems) - I haven't managed to make it work on Windows (the javac syntax is slightly different and I'm useless at .bat files)
+
 == Introduction ==
 BeatSequencer is a music DSL that allows users to program both monophonic and polyphonic patterns and play them
 back using the Java MIDI subsystem.
