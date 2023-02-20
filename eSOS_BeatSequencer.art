@@ -369,7 +369,7 @@ playConcurrent(_concChannelList), _sig -> playConcurrent(_concChannelListP), _si
 // One track concurrency
 // !try seq( setBpm(120), playConcurrent( concChannel(1, "[C3:8, C3:8, C4:8, C4:8, Eb4:8, Eb4:8, C4:8, C4:8, Ab2:8, Ab2:8, Ab3:8, C4:8, G2:8, G2:8, Bb3:8, C4:8]") ) ), __map
 
-// Sweet dreams with drums!
+// Sweet dreams with drums and melody!
 !try seq(
   setBpm(120),
   seq(
@@ -384,3 +384,10 @@ playConcurrent(_concChannelList), _sig -> playConcurrent(_concChannelListP), _si
           concChannel(2, repeat("[C3:4, C3:4, C3:4, C3:4]", 7),
             concChannel(3, repeat(deref(vocals), 1)))
     )))))), __map
+
+// Rhythmic scale
+!try seq(setBpm(120),
+  play(1, concat(
+    concat("[C4:1, C4:2, C4:2, C4:4, C4:4, C4:4, C4:4, C4:8, C4:8, C4:8, C4:8, C4:8, C4:8, C4:8, C4:8]", repeat("[C4:16]", 15)),
+    concat(repeat("[C4:32]", 31), repeat("[C4:64]", 63)))
+    )), __map

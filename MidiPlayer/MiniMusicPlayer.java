@@ -7,15 +7,10 @@ import javax.sound.midi.Synthesizer;
 
 import java.util.List;
 
-/**
-TODO: You can set instruments via the programChange method of a MidiChannel.
-  For the language, we could specify an instrument - e.g. drums, synth, .etc, and then use some sort of tabular / drum tab notation, parse that.. would that work?
-  A text-based sequencer??? Or a text based drum machine? Could do REPEAT bars, store phrases in the symbol table.. it might go horribly wrong but it could be fun.
-*/
-
+/** MiniMusicPlayer re-engineered to fit the needs of BeatSequencer */
 
 public class MiniMusicPlayer {
-  private final int SUBDIVISION_DIVISOR = 4;
+  private final int FOURFOUR = 4;
 
   private Synthesizer synthesizer;
   private MidiChannel[] channels;
@@ -50,7 +45,6 @@ public class MiniMusicPlayer {
     setBeatRatio(0.9);
     setBpm(100);
     setDefaultVelocity(100);
-    rest(2);
   }
 
   public Synthesizer getSynthesizer() {
@@ -92,59 +86,53 @@ public class MiniMusicPlayer {
   }
 
 
-  public void rest(int beats) {
+  public void rest(int beats, int subdivision) {
     try {
-      Thread.sleep((long) (beats * beatPeriod));
+      Thread.sleep(FOURFOUR * (long) (beats * beatPeriod) / (subdivision));
     } catch (InterruptedException e) {
       /* ignore */
     }
   }
 
-  public void rest(int beats, int length) {
-    try {
-      Thread.sleep((long) (beats * beatPeriod) / (length / SUBDIVISION_DIVISOR));
-    } catch (InterruptedException e) {
-      /* ignore */
-    }
-  }
-
-  void play(int channel, int k, int length) {
-    System.out.println("Playing " + k);
+  void play(int channel, int k, int subdivision) {
     try {
       channels[channel].noteOn(k, defaultVelocity);
-      Thread.sleep(beatSoundDelay / (length / SUBDIVISION_DIVISOR));
+      Thread.sleep(FOURFOUR * (beatSoundDelay / subdivision));
       channels[channel].noteOn(k, 0);
-      Thread.sleep(beatSilenceDelay / (length / SUBDIVISION_DIVISOR));
+      Thread.sleep(FOURFOUR * (beatSilenceDelay / subdivision));
     } catch (InterruptedException e) {
       /* ignore */
     }
   }
 
-  public void playNote(int channel, Note note, int length) {
+  public void playNote(int channel, Note note, int subdivision) {
     String pitch = note.getPitch();
     if (note.isRest()) {
-      rest(1, length);
+      rest(1, subdivision);
     } else {
       int midiKey = getMidiKeyFromPitch(pitch);
-      play(channel, midiKey, length);
+      System.out.println(pitch + " (" + midiKey + ")");
+      play(channel, midiKey, subdivision);
     }
   }
 
-  public void playNotes(int channel, List<Note> notes, int length) {
-    System.out.println("Bpm: " + bpm);
+  public void playNotes(int channel, List<Note> notes, int subdivision) {
     try {
       for (Note note : notes) {
+        String pitch = note.getPitch();
+        int midiKey = getMidiKeyFromPitch(pitch);
         if (!note.isRest()) {
-          channels[channel].noteOn(getMidiKeyFromPitch(note.getPitch()), defaultVelocity);
+          System.out.println(note.getPitch() + " (" + midiKey + ")");
+          channels[channel].noteOn(midiKey, defaultVelocity);
         }
       }
-      Thread.sleep(beatSoundDelay / (length / SUBDIVISION_DIVISOR));
+      Thread.sleep(FOURFOUR * (beatSoundDelay / subdivision));
       for (Note note : notes) {
         if (!note.isRest()) {
           channels[channel].noteOn(getMidiKeyFromPitch(note.getPitch()), 0);
         }
       }
-      Thread.sleep(beatSilenceDelay / (length / SUBDIVISION_DIVISOR));
+      Thread.sleep(FOURFOUR * (beatSilenceDelay / subdivision));
     } catch (InterruptedException e) {
       /* ignore */
     }
@@ -152,24 +140,22 @@ public class MiniMusicPlayer {
   }
     
   void close() {
-    rest(3);
+    rest(1, 1);
     synthesizer.close();
   }
 
   public void playPhrase(int channel, List<Measure> phrase) {
-    System.out.println("PLAYING PHRASE");
     for (Measure measure : phrase) {
       playMeasure(channel, measure);
     }
   }
 
   public void playMeasure(int channel, Measure measure) {
-    System.out.println("playMeasure: length is " + measure.getLength());
     if (measure.isChord()) {
-      playNotes(channel, measure.getNotes(), measure.getLength());
+      playNotes(channel, measure.getNotes(), measure.getSubdivision());
     } else {
       for (Note note : measure.getNotes()) {
-        playNote(channel, note, measure.getLength());
+        playNote(channel, note, measure.getSubdivision());
       }
     }
   }

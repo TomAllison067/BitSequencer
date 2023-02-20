@@ -71,11 +71,11 @@ public class PhraseFactory {
           separator = CHORD_NOTE_SEPERATOR;
         }
         sb.append("}");
-        sb.append(":" + measure.getLength());
+        sb.append(":" + measure.getSubdivision());
         separator = MEASURE_SEPARATOR;
       } else {
         for (Note note : measure.getNotes()) {
-          sb.append(separator + note.getPitch() + ":" + measure.getLength());
+          sb.append(separator + note.getPitch() + ":" + measure.getSubdivision());
           separator = MEASURE_SEPARATOR;
         }
       }
