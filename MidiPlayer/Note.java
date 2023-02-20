@@ -17,7 +17,6 @@ public class Note {
    */
   public Note modulate(int n) {
     if (!this.isRest()) {
-      String pitchToModulate = parseNote(this.pitch);
       System.out.println("Modulating note " + this.pitch);
       int shiftedKey = instance.getMidiKey(this.pitch) + n;
       return new Note(
@@ -28,17 +27,6 @@ public class Note {
     }
   }
   
-  /** Remove curly braces */
-  public String parseNote(String pitch) {
-    if (pitch.contains("{")) {
-      pitch = pitch.substring(pitch.indexOf("{"));
-    }
-    if (pitch.contains("}")) {
-      pitch = pitch.substring(0, pitch.indexOf("}"));
-    }
-    return pitch;
-  }
-
   public boolean isRest() {
     return this.pitch.equals(".");
   }
