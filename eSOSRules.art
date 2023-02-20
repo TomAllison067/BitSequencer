@@ -262,7 +262,7 @@ repeat(_phrase, _n), _sig -> __user(4, _phrase, _n), _sig
 -repeatResolveRight
 _phrase |> __string(_) _n, _sig -> _nP, _sigP
 ---
-repeat(_phrase, _n), _sig -> _repeat(_phrase, _nP), _sigP
+repeat(_phrase, _n), _sig -> repeat(_phrase, _nP), _sigP
 
 -repeatResolveLeft
 _phrase, _sig -> _phraseP, _sigP
