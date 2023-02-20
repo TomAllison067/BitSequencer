@@ -165,65 +165,50 @@ Basic String type
 
 Operations, syntax, arities
 ---------------------------
-assign(_name: String, _a:Object)
-Assign variable _a to name _name in the store. Works over all basic primitives and domain-specific types.
+add(_E1:__int32, _E2:__int32):__int32
+Integer addition, E_1 + E_2
 
-add(_E1:__int32, _E2:__int32):__int32 integer addition: E_1 + E_2
+sub(_E1:__int32, _E2:__int32):__int32
+Integer subtraction, E_1 - E_2
 
-sub(_E1:__int32, _E2:__int32):__int32 integer subtraction: E_1 - E_2
+mult(_E1:__int32, _E2:__int32):__int32
+Integer addition, E_1 * E_2
 
-mult(_E1:__int32, _E2:__int32):__int32 integer addition: E_1 * E_2
+div(_E1:__int32, E2:__int32):__int32
+Integer floor division, E1 / E2
 
-div(_E1:__int32, E2:__inte3):__int32 integer floor division: E1 /E2
+exp(_E1:__int32, E2:__int32):__int32
+Integer exponentiation, E1 ^ E2
 
-gt(_E1:__int32, _E2:__int32):__boolean integer greater-than E_1 > E_2
+gt(_E1:__int32, _E2:__int32):__boolean
+Integer greater-than, E1 > E2
 
-ge(_E1:__int32, _E2:__int32):__boolean integer greater-than or equal E_1 >= E_2
+ge(_E1:__int32, _E2:__int32):__boolean
+Integer greater-than or equal E1 >= E2
 
-lt(_E1:__int32, _E2:__int32):__boolean integer lesser-than E_1 < E_2
+lt(_E1:__int32, _E2:__int32):__boolean
+Integer lesser-than, E1 < E2
 
-le(_E1:__int32, _E2:__int32):__boolean integer lesser-than or equal E_1 <= E_2
+le(_E1:__int32, _E2:__int32):__boolean 
+Integer lesser-than or equal, E1 <= E2
 
-ne(_E1:__int32, _E2:__int32):__boolean integer not-equals E_1 ne E_2
+ne(_E1:__int32, _E2:__int32):__boolean
+Integer not-equals, E1 ne E2
 
-eq(_E1:__int32, _E2:__int32):__bolean integer equality E1 equals E2
+eq(_E1:__int32, _E2:__int32):__boolean 
+Integer equality, E1 equals E2
 
-deref(_N)) retrieve binding for name _N in variables map
-
-concat(_a:Note, _b:Note):Note
-Return a new phrase that is the concatenation of two notes _a and _b.
-
-concat(_a:Phrase, _b:Phrase):Phrase
+concat(_a:__string, _b:__string):__string
 Return a new phrase that is the concatenation of phrase _a and _b_.
 
-concat(_a:Pattern, _b:Pattern):Pattern
-Return a new Pattern consisting of the phrases in each channel of pattern _a concatenated with their corresponding phrases in pattern _b.concat(_a:Note, _b:Note):Note
-
-repeat(_a:Note, _x:__int32):Phrase
-Construct a new phrase by concatenating _x instances of _a together.
- 
-repeat(_a:Phrase, _x:__int32):Phrase
+repeat(_a:__string, _x:__int32):__string
 Construct a new phrase from phrase _a by concatenating _x instances of _a together.
-
-repeat(_a:Pattern, _x:__int32):Pattern
-Construct a new pattern from pattern _a by concatenating _x instances of _a together.
-
-increment(_note: Note, _step:__int32):Note
-Returns a new Note with the pitch incremented by _step semitones (or decremented if given a negative number).
-Note, this creates and returns a new Note instance rather than changing the pitch of the provided _note instance.
-
-length(_phrase:Phrase):__int32
-Return the length (in semiquavers) of the given phrase, i.e. the sum of all notes in this phrase.
-
-length(_note:Note):__int32
-Return the length (in semiquavers) of the given note.
-
-length(_pattern:Pattern):__int32
-Return the length (in semiquavers) of the given pattern. The interpreter should enforce that each phrase in the
-pattern is indeed the same length, otherwise the pattern is illegal (and this operation is undefined).
 
 play(_pattern:Pattern)
 Call the Java MIDI system to play the tracks in the given pattern.
+
+modulate(_phrase:String, _n:__int32):__string
+Return a new phrase that is the modulaltion of _phrase by _n semitones
 
 seq(_S1, _S2)
 Execute _S1, followed by _S2.
@@ -233,3 +218,33 @@ Selection, if _P evaluates to true then execute _S1, else execute _S2
 
 while(_P:__bool, _C1, _C2)
 Iteration, while _P is true execute _S1, else execute _S2
+
+assign(_ID:__quote, __n:__int32) bind _n to name _ID in variables map
+assign(_ID:__quote, __n:__string) bind _n to name _ID in variables map 
+deref(_N):__int retrieve binding for name _N in variables map
+deref(_N):__string retrieve binding for name _N in variables map
+
+play(_channel:__int32, _phrase:__string):__done
+Call the backend to play _phrase on channel number _channel
+
+setBpm(_n:__int32):__done
+Call the backend to set the tempo all phrases will be played at
+
+printAvailableInstruments():__done
+Call the backend to print all available instruments in the Java MIDI subsystem to the terminal
+
+setChannelInstrument(_channel:__int32, _instrument:__int32):__done
+Call the backend to set the instrument of _channel to _instrument
+
+concChannel(_channel:__int32, _phrase:__string):__done
+Call the backend to put a mapping of _channel to _phrase in an internal map, used to play phrases concurrently.
+
+concChannel(_channel:__int32, _phrase:__string, _next:__quote)
+Resolve _next to the two-arity concChannel constructor, allowing lists of concurrent channels to be added to the internal map.
+This will eventually resolve to __done as per the above constructor.
+
+playConcurrent(__done):__done
+Call the backend to play the channels and phrases in the backend's concurrent channel map, and then clear the map.
+
+playConcurrent(_concChannelList:__quote)
+Resolve _concChannelList to a series of concChannel terms, and eventually resolve to __done as per the previous playConcurrent constructor.
