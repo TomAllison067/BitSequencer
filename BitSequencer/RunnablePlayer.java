@@ -1,4 +1,4 @@
-package BeatSequencer;
+package BitSequencer;
 
 import java.util.List;
 

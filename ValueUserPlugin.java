@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import BeatSequencer.MiniMusicPlayer;
-import BeatSequencer.PhraseFactory;
-import BeatSequencer.RunnablePlayer;
+import BitSequencer.MiniMusicPlayer;
+import BitSequencer.PhraseFactory;
+import BitSequencer.RunnablePlayer;
 
 public class ValueUserPlugin implements ValueUserPluginInterface {
   private MiniMusicPlayer musicPlayer = new MiniMusicPlayer();

@@ -1,4 +1,4 @@
-package BeatSequencer;
+package BitSequencer;
 
 import javax.sound.midi.Instrument;
 import javax.sound.midi.MidiChannel;

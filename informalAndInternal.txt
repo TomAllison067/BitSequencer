@@ -1,9 +1,9 @@
-BeatSequencer (music)
+BitSequencer (music)
 
 A: Informal language specification
 =================================
 
-BeatSequencer allows the specification of musical phrases as lists of MIDI notes which can be:
+BitSequencer allows the specification of musical phrases as lists of MIDI notes which can be:
 * Assigned to variables and dereferenced
 * Repeated
 * Concatenated to one another
@@ -13,7 +13,7 @@ BeatSequencer allows the specification of musical phrases as lists of MIDI notes
 
 S.1 Programs
 ------------
-A BeatSequencer program consists of one or more statements in which phrases can be constructed, assigned, and played.
+A BitSequencer program consists of one or more statements in which phrases can be constructed, assigned, and played.
 
 Statements are separated by the ; operator. There is no statement terminator.
 
@@ -21,7 +21,7 @@ A sequence of whitespace characters can be used wherever one whitespace is valid
 
 S.2 Arithmetic and expressions
 ------------------------------
-BeatSequencer allows standard integer arithmetic. The operations supported are addition, subtraction, multiplication, division and exponentiation.
+BitSequencer allows standard integer arithmetic. The operations supported are addition, subtraction, multiplication, division and exponentiation.
 
 Non-keyword alphanumeric identifiers denote variables that may have integers or strings (musical phrases) bound to them.
 
@@ -29,7 +29,7 @@ Variables can be derefenced to obtain their integer or string value stored in th
 
 S.3 Predicates
 --------------
-BeatSequencer allows comparison of integers using relational operators that return a boolean result:
+BitSequencer allows comparison of integers using relational operators that return a boolean result:
 x > y       x greater than y
 x < y       x less than y
 x >= y      x greater than or equal to y
@@ -41,7 +41,7 @@ x == y      x equal to y
 S.4 Selection statements
 ------------------------
 
-BeatSequencer provides two selection statements:
+BitSequencer provides two selection statements:
 
 if _pred then _statement else _statement
 if _pred then _statement
@@ -51,7 +51,7 @@ where _pred is a predicate as defined in section S.3, and _statement is any stat
 
 S.5 Iteration statements
 ------------------------
-BeatSequencer provides one iteration statement:
+BitSequencer provides one iteration statement:
 
 while _pred do _statement
 
@@ -60,7 +60,7 @@ where _pred is a predicate as defined in section S.3, and _statement is any stat
 
 S.6 Domain specific types
 -------------------------
-BeatSequencer has the following domain specific types:
+BitSequencer has the following domain specific types:
 
 Phrase - a comma-delimited list of MIDI notes to be played in order written inside square brackets, 
          assignable to an identifier. Phrases can be appended or repeated with '+' or '*' operators.
@@ -85,7 +85,7 @@ Phrase - a comma-delimited list of MIDI notes to be played in order written insi
   can be nested as many times as you like with the pattern `concChannel(channel, phrase, concChannel(...))`.
     
 Channel - a channel consists of a mapping from an integer key to an integer representing a MIDI instrument. The full list of MIDI instruments
-          supported by BeatSequencer (from the Java MIDI subsystem) can be viewed in `documentation/instrmuentlist.txt`.
+          supported by BitSequencer (from the Java MIDI subsystem) can be viewed in `documentation/instrmuentlist.txt`.
 
   Channels have no constructor. They do not need to be explicitly constructed as they already exist in the backend, but can be mapped to an instrument 
   with the `setChannelInstrument` domain-specific operation. If no instrument is provided to a channel, any patterns played
@@ -93,7 +93,7 @@ Channel - a channel consists of a mapping from an integer key to an integer repr
 
 S.7 Domain specific operations
 ------------------------------
-BeatSequencer provides concatenation, repetition and modulation for phrases. In this context, the '+' symbol acts as the concatenation operator, '*' as the 
+BitSequencer provides concatenation, repetition and modulation for phrases. In this context, the '+' symbol acts as the concatenation operator, '*' as the 
 repetition operator and '^' as the modulation operator.
 
 '+' acts as follows:
@@ -110,7 +110,7 @@ repetition operator and '^' as the modulation operator.
 
 Signatures for the operations above can be found in section B.
 
-Overall, BeatSequencer provides 9 DSL-type statements which call corresponding methods in the ValueUserPlugin class:
+Overall, BitSequencer provides 9 DSL-type statements which call corresponding methods in the ValueUserPlugin class:
   
   modulate(_phrase:String _n:String):String calls the backend to return a phrase modulated by _n semitones.
 

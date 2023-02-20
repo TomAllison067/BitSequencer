@@ -1,4 +1,4 @@
-package BeatSequencer;
+package BitSequencer;
 
 public class Note {
   private String pitch;
