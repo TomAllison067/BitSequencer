@@ -385,7 +385,7 @@ playConcurrent(_concChannelList), _sig -> playConcurrent(_concChannelListP), _si
 //!try seq(setBpm(120), seq( setChannelInstrument(1, 90) , play(1, "[C4:4, E4:4, G4:4, C5:4]") ) ), __map
 
 // Test chords in a phrase
-//!try seq( setBpm(120), playConcurrent(concChannel(1, "[C4:8, E4:8, G4:8, C5:8, .:8, {G4/B4/D4}:8, .:8, {C4/E4/G4}:8, .:8, C2:4]"))), __map
+!try seq( setBpm(120), playConcurrent(concChannel(1, "[C4:8, E4:8, G4:8, C5:8, .:8, {G4/B4/D4}:8, .:8, {C4/E4/G4}:8, .:8, C2:4]"))), __map
 
 // Test one channel concurrency
 //!try seq( setBpm(120), playConcurrent( concChannel(1, "[C3:8, C3:8, C4:8, C4:8, Eb4:8, Eb4:8, C4:8, C4:8, Ab2:8, Ab2:8, Ab3:8, C4:8, G2:8, G2:8, Bb3:8, C4:8]") ) ), __map
