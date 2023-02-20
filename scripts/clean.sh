@@ -7,3 +7,4 @@ rm artSpecification.*
 rm *.class
 rm ARTGeneratedLexer.java
 rm ARTGeneratedParse.java
+rm BeatSequencer/*.class
