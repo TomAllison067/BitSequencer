@@ -98,7 +98,7 @@ public class PhraseFactory {
       System.exit(-1);
     }
     String repeated = phrase;
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n - 1; i++) {
       repeated = concatPhraseFromPhraseString(repeated, phrase);
     }
     return repeated;

@@ -57,39 +57,40 @@ S.6 Domain specific types
 -------------------------
 BeatSequencer has the following domain specific types:
 
-Phrase - a comma-delimited list of notes to be played in order written inside square brackets, 
+Phrase - a comma-delimited list of MIDI notes to be played in order written inside square brackets, 
          assignable to an identifier. Phrases can be appended or repeated with '+' or '*' operators.
     E.g:
-        twoBarKickLoop = [C:4:4, C4:4:4, C4:4:4, C4:4:4] * 2
-        oneBarRest = [.:.:16] * 16
-        cMajorScale = [C:4:8, D:4:8, E:4:8, F:4:8, G:4:8, A:4:8, B:4:8, C:4:8]
+        twoBarKickLoop = [C4:4, C4:4, C4:4, C4:4] * 2
+        oneBarRest = [.:16] * 16
+        cMajorScale = [C4:8, D4:8, E4:8, F4:8, G4:8, A4:8, B4:8, C4:8, {C4/E4/G4}:4]
 
-Pattern - a list of phrases to be played at the same time
-    E.g:
-        bassline_intro;
-        bassline_intro[0] = kick_loop * 2 + kick_snare_loop * 2;
-        bassline_intro[1] = bassline;
-        4_bar_rest_pattern;
-        for (int i = 0; i < length(4_bar_rest_pattern); i++) {
-            4_bar_rest_pattern[i] = restBar * 4;
-        };
+  A note in a phrase consists of a MIDI note name, a colon, and then an integer representing its subdivision. For example,
+  "C4:4" represents a crotchet (quarter note) middle C. "G5:8" represents a quaver (eighth note) G in the octave above middle C.
+  
+  Chords can be written with the following syntax: "{C4/E4/G4}:4", where inside the curly braces is a list of MIDI notes separated by a slash, and the
+  colon and integer after the closing brace represents the subdivision of the entire chord.
 
-Track - A track has an integer numerical identifier, a user-specifiable name, and the name of the instrument
-        the track will play. 
-    E.g:
-        0: "drums", drums;
-        1: "synth1", synth;
-        2: "synth2", synth;
+  Rests are written with a single dot, followed by a colon and the subdivision.
 
+  A phrase can be played on one channel with the `play(channel, phrase)` domain-specific operation, or multiple phrases can be played across
+  multiple channels with the `playConcurrent(concChannel(channel, phrase, concChannel(channel, phrase)))` domain-specific operation. This operation
+  can be nested as many times as you like with the pattern `concChannel(channel, phrase, concChannel(...))`.
+    
+Channel - a channel consists of a mapping from an integer key to an integer representing a MIDI instrument. The full list of MIDI instruments
+          supported by BeatSequencer (from the Java MIDI subsystem) can be viewed in `documentation/instrmuentlist.txt`.
+
+  Channels have no constructor. They do not need to be explicitly constructed as they already exist in the backend, but can be mapped to an instrument 
+  with the `setChannelInstrument` domain-specific operation. If no instrument is provided to a channel, any patterns played
+  on the channel will be played with the default instrument 0 (Acoustic Grand Piano). 
 
 S.7 Domain specific operations
 ------------------------------
-BeatSequencer provides concatenation and repetition for notes, phrases, and patterns. In this context, the '+' symbol acts as the concatenation operator
-and the '*' as the repetition operator.
+BeatSequencer provides concatenation, repetition and modulation for phrases. In this context, the '+' symbol acts as the concatenation operator, '*' as the 
+repetition operator and '^' as the modulation operator.
 
 '+' acts as follows:
-    phrase1 + phrase2: returns a single new phrase that is the concatenation of phrase1 and phrase2, e.g. [C:4:8, D5==] + [E4, {C,E,G}=] returns [C4, D5==, E4, {C,E,G}=]
-    pattern1 + pattern2: returns a new pattern where for each index i, phrases pattern1[i] and pattern2[i] are concatenated, e.g. phattern3[i] = pattern1[i] (a phrase) concatenated with pattern2[i] (another phrase)
+    phrase1 + phrase2: returns a single new phrase that is the concatenation of phrase1 and phrase2, 
+    e.g. "[C4:8, D5:4]" + "[E4:4, {C2/E2/G2}:8]" returns "[C4:8, D5:4, E4:4, {C2/E2/G2}:8]"
     
 '*' acts as follows:
     note1 * k: returns a new phrase consisting of k instances of note1, e.g. C4 * 4 returns [C4, C4, C4, C4]

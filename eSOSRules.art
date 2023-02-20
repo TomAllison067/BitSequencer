@@ -401,16 +401,16 @@ playConcurrent(_concChannelList), _sig -> playConcurrent(_concChannelListP), _si
     seq(
       setChannelInstrument(2,128),
       playConcurrent(
-        concChannel(1, repeat("[C3:8, C3:8, C4:8, C4:8, Eb4:8, Eb4:8, C4:8, C4:8, Ab2:8, Ab2:8, Ab3:8, C4:8, G2:8, G2:8, Bb3:8, C4:8]", 3),
-          concChannel(2, repeat("[C3:4, C3:4, C3:4, C3:4]", 7),
-            concChannel(3, repeat(deref(vocals), 1)))
+        concChannel(1, repeat("[C3:8, C3:8, C4:8, C4:8, Eb4:8, Eb4:8, C4:8, C4:8, Ab2:8, Ab2:8, Ab3:8, C4:8, G2:8, G2:8, Bb3:8, C4:8]", 4),
+          concChannel(2, repeat("[C3:4, C3:4, C3:4, C3:4]", 8),
+            concChannel(3, repeat(deref(vocals), 2)))
     )))))), __map
 
 // Test rhythmic scale
 !try seq(setBpm(120),
   play(1, concat(
-    concat("[C4:1, C4:2, C4:2, C4:4, C4:4, C4:4, C4:4, C4:8, C4:8, C4:8, C4:8, C4:8, C4:8, C4:8, C4:8]", repeat("[C4:16]", 15)),
-    concat(repeat("[C4:32]", 31), repeat("[C4:64]", 63)))
+    concat("[C4:1, C4:2, C4:2, C4:4, C4:4, C4:4, C4:4, C4:8, C4:8, C4:8, C4:8, C4:8, C4:8, C4:8, C4:8]", repeat("[C4:16]", 16)),
+    concat(repeat("[C4:32]", 32), repeat("[C4:64]", 64)))
     )), __map
 
 // Test MIDI note range
