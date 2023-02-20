@@ -392,7 +392,7 @@ playConcurrent(_concChannelList), _sig -> playConcurrent(_concChannelListP), _si
 
 // Test n-channel concurrency: sweet dreams with drums and melody!
 !try seq(
-  setBpm(120),
+  setBpm(140),
   seq(
   setChannelInstrument(1, 45),
   seq(assign(vocals, concat(
@@ -407,12 +407,12 @@ playConcurrent(_concChannelList), _sig -> playConcurrent(_concChannelListP), _si
     )))))), __map
 
 // Test rhythmic scale
-!try seq(setBpm(120),
+!try seq(setBpm(150),
   play(1, concat(
     concat("[C4:1, C4:2, C4:2, C4:4, C4:4, C4:4, C4:4, C4:8, C4:8, C4:8, C4:8, C4:8, C4:8, C4:8, C4:8]", repeat("[C4:16]", 16)),
     concat(repeat("[C4:32]", 32), repeat("[C4:64]", 64)))
     )), __map
 
 // Test MIDI note range
-!try seq( assign(x, "[C-1:16, C#-1:16, Db-1:16, D-1:16, D#-1:16, Eb-1:16, E-1:16, F#-1:16, Gb-1:16, G-1:16, G#-1:16, Ab-1:16, A-1:16, A#-1:16, Bb-1:16, B-1:16]"), seq( assign(i, 0), while( ne(deref(i), 10), seq( setChannelInstrument(1, 47), seq(play(1, modulate(deref(x), mul(deref(i), 12))), assign(i, add(deref(i), 1)) )) ) ) ), __map
+!try seq(setBpm(160), seq(assign(x, "[C-1:16, C#-1:16, Db-1:16, D-1:16, D#-1:16, Eb-1:16, E-1:16, F#-1:16, Gb-1:16, G-1:16, G#-1:16, Ab-1:16, A-1:16, A#-1:16, Bb-1:16, B-1:16]"), seq( assign(i, 0), while( ne(deref(i), 10), seq( setChannelInstrument(1, 47), seq(play(1, modulate(deref(x), mul(deref(i), 12))), assign(i, add(deref(i), 1)) )) )) ) ), __map
 !try play(1, "[C9:16, C#9:16, Db9:16, D9:16, D#9:16, Eb9:16, E9:16, F9:16, F#9:16, Gb9:16, G9:16]"), __map
