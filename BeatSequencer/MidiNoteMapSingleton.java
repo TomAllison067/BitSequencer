@@ -55,7 +55,6 @@ public enum MidiNoteMapSingleton {
         Integer noteNumber = Integer.parseInt(e.getKey().substring(e.getKey().length() - 1));
         String newKey = noteName + Integer.toString(noteNumber + (i * 1 - 1));
         int newValue = e.getValue() + (12 * (i - 1));
-        System.out.println("New key is " + newKey);
         tmp.put(newKey, newValue);
       }
     }
