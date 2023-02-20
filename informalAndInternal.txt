@@ -1,4 +1,4 @@
-Music
+BeatSequencer (music)
 
 A: Informal language specification
 =================================
