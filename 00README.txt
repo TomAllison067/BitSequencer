@@ -21,6 +21,6 @@ directives.
 
 All the !try directives should work as expected, but they've all been commented out aside from the last three (which are the most interesting):
 * One plays an excerpt of Sweet Dreams by Eurythmics with three instruments by playing three patterns concurrently.
-* One plays a rhythmic scale, repeating notes starting breves, semibreves, and dividing into eventually into 64th notes. This is to test that note durations
+* One plays a rhythmic scale, repeating notes starting with breves, semibreves, and dividing into eventually into 64th notes. This is to test that note durations
   have been properly implemented.
 * One plays all of the MIDI notes available to BeatSequencer, ranging from 21 (A0) to 127 (G9), repeating notes where sharps and flats overlap.
