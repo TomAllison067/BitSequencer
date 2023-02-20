@@ -6,5 +6,5 @@ rm *.dot.pdf
 rm artSpecification.*
 rm *.class
 rm ARTGeneratedLexer.java
-rm ARTGeneratedParse.java
+rm ARTGeneratedParser.java
 rm BeatSequencer/*.class
