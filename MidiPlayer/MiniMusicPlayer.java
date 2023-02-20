@@ -119,20 +119,6 @@ public class MiniMusicPlayer {
       /* ignore */
     }
   }
- 
-  // Arrays of notes 
-  void play(int[] k) {
-    try {
-      for (int i = 0; i < k.length; i++)
-        channels[1].noteOn(k[i], defaultVelocity);
-      Thread.sleep(beatSoundDelay);
-      for (int i = 0; i < k.length; i++)
-        channels[1].noteOn(k[i], 0);
-      Thread.sleep(beatSilenceDelay);
-    } catch (InterruptedException e) {
-      /* ignore */
-    }
-  }
 
   public void playNote(int channel, Note note, int length) {
     String pitch = note.getPitch();
@@ -158,7 +144,7 @@ public class MiniMusicPlayer {
           channels[channel].noteOn(getMidiKeyFromPitch(note.getPitch()), 0);
         }
       }
-      Thread.sleep(beatSoundDelay / (length / SUBDIVISION_DIVISOR));
+      Thread.sleep(beatSilenceDelay / (length / SUBDIVISION_DIVISOR));
     } catch (InterruptedException e) {
       /* ignore */
     }

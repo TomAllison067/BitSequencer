@@ -364,7 +364,7 @@ playConcurrent(_concChannelList), _sig -> playConcurrent(_concChannelListP), _si
 // !try seq(setBpm(120), seq( setChannelInstrument(1, 90) , play(1, "[C4:4, E4:4, G4:4, C5:4]") ) ), __map
 
 // Chords in a phrase
-// !try seq( setBpm(120), play(1, "[C4:8, E4:8, G4:8, C5:8, .:8, {G4-B4-D4}:8, .:8, {C4-E4-G4}:8, .:8, C2:4]") ), __map
+// !try seq( setBpm(120), playConcurrent(concChannel(1, "[C4:8, E4:8, G4:8, C5:8, .:8, {G4-B4-D4}:8, .:8, {C4-E4-G4}:8, .:8, C2:4]"))), __map
 
 // One track concurrency
 // !try seq( setBpm(120), playConcurrent( concChannel(1, "[C3:8, C3:8, C4:8, C4:8, Eb4:8, Eb4:8, C4:8, C4:8, Ab2:8, Ab2:8, Ab3:8, C4:8, G2:8, G2:8, Bb3:8, C4:8]") ) ), __map
@@ -374,11 +374,13 @@ playConcurrent(_concChannelList), _sig -> playConcurrent(_concChannelListP), _si
   setBpm(120),
   seq(
   setChannelInstrument(1, 45),
-  seq(assign(vocals, concat("[.:4, {Eb4-Eb5}:4, {Eb4-Eb5}:4, {C4-C5}:8, {Eb4-Eb5}:8]" "[.:8, {Eb4-Eb5}:4, {Eb4-Eb5}:8, {D4-D5}:4]")),
+  seq(assign(vocals, concat(
+      concat("[.:4, {Eb4-Eb5}:4, {Eb4-Eb5}:4, {C4-C5}:8, {Eb4-Eb5}:8]" "[.:8, {Eb4-Eb5}:4, {Eb4-Eb5}:8, {D4-D5}:4, .:4]")
+      ,concat("[{Eb4-Eb5}:8, {Eb4-Eb5}:8, {C4-C5}:8, {Eb4-Eb5}:8, .:4, {C4-C5}:4]", "[{Eb4-Eb5}:8, {F4-F5}:4, .:8, {Eb4-Eb5}:8, {D4-D5}:4, .:8]"))),
     seq(
       setChannelInstrument(2,128),
       playConcurrent(
-        // concChannel(1, repeat("[C3:8, C3:8, C4:8, C4:8, Eb4:8, Eb4:8, C4:8, C4:8, Ab2:8, Ab2:8, Ab3:8, C4:8, G2:8, G2:8, Bb3:8, C4:8]", 1),
-          // concChannel(2, repeat("[C3:4, C3:4, C3:4, C3:4]", 7),
-            concChannel(3, repeat(deref(vocals), 1)// ))
+        concChannel(1, repeat("[C3:8, C3:8, C4:8, C4:8, Eb4:8, Eb4:8, C4:8, C4:8, Ab2:8, Ab2:8, Ab3:8, C4:8, G2:8, G2:8, Bb3:8, C4:8]", 3),
+          concChannel(2, repeat("[C3:4, C3:4, C3:4, C3:4]", 7),
+            concChannel(3, repeat(deref(vocals), 1)))
     )))))), __map
