@@ -3,6 +3,10 @@ package MidiPlayer;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Maps note strings to their MIDI note numbers, and vice versa.
+ * Helper methods generate the maps to save typing out 127 entries by hand.
+ */
 public enum MidiNoteMapSingleton {
   INSTANCE();
 
@@ -45,7 +49,7 @@ public enum MidiNoteMapSingleton {
 
     Map<String, Integer> tmp = new HashMap<String, Integer>();
     for (Map.Entry<String, Integer> e : baseNoteToMidiKey.entrySet()) {
-      for (int i = 1; i <= 9; i++) {
+      for (int i = 0; i <= 9; i++) {
         String newKey = e.getKey() + Integer.toString(i);
         int newValue = e.getValue() + (12 * (i - 1));
         tmp.put(newKey, newValue);
