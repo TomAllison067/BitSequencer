@@ -1,6 +1,6 @@
 Welcome to BeatSequencer!
 
-The backend compiles on the university linux server with `scripts/buildplugin.sh` (and other unix systems) - I haven't managed to make it work on Windows (the javac syntax is slightly different and I'm useless at .bat files)
+The backend classes, including ValueUserPlugin.class, are all compiled into BitSequencer.jar.
 
 == Introduction ==
 BeatSequencer is a music DSL that allows users to program both monophonic and polyphonic patterns and play them
@@ -18,7 +18,7 @@ Chords are written by enclosing notes delimited by a `/` symbol inside curly bra
 the last curly brace. So, "{G4/B4/D4}:4" plays a crotchet-length (quarter note) chord consisting of notes G4, B4 and D4 (a G major chord).
 
 == How to run the eSOS rules ==
-From the root directory of the project, run `scripts/build.sh` to compile the Java backend classes and `scripts/art.sh eSOSRules.art` to interpret the !try
+From the root directory of the project, run `art.bat eSOSRules`. 
 directives.
 
 All the !try directives should work as expected, but they've all been commented out aside from the last three (which are the most interesting):
