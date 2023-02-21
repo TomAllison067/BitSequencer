@@ -8,3 +8,5 @@ rm *.class
 rm ARTGeneratedLexer.java
 rm ARTGeneratedParser.java
 rm BitSequencer/*.class
+rm -rf ./build/
+rm -rf BitSequencerSubmission/

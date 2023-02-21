@@ -1,3 +1,5 @@
 #!/bin/bash
-javac  -cp ".:BitSequencer" BitSequencer/MiniMusicPlayer.java
-javac  -cp ".:./ART/art.jar" ValueUserPlugin.java
+javac  -d ./build -cp ".:BitSequencer" BitSequencer/*.java
+cd build && jar cvf ./BitSequencer.jar ./BitSequencer/* && cd ..
+javac  -d ./build -cp ".:./ART/art.jar:./build/BitSequencer.jar" ValueUserPlugin.java
+cd build && jar uf ./BitSequencer.jar *.class && cd ..
