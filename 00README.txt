@@ -18,7 +18,7 @@ Chords are written by enclosing notes delimited by a `/` symbol inside curly bra
 the last curly brace. So, "{G4/B4/D4}:4" plays a crotchet-length (quarter note) chord consisting of notes G4, B4 and D4 (a G major chord).
 
 == How to run the eSOS rules ==
-From the root directory of the project, run `art.bat eSOSRules`. 
+From the root directory of the project, run `art.bat eSOSRules.art`. 
 directives.
 
 All the !try directives should work as expected, but they've all been commented out aside from the last three (which are the most interesting):
