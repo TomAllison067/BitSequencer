@@ -2,5 +2,5 @@
 artSpecification.*
 ARTGeneratedParser.java
 .vscode
-_BitSequencerSubmission/
+_BitSequencerSubmission*
 build/

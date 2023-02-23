@@ -17,7 +17,8 @@ clean:
 	rm -rf ARTGeneratedParser.java
 	rm -rf BitSequencer/*.class
 	rm -rf ./build/
-	rm -rf _BitSequencerSubmission/
+	rm -rf ./_BitSequencerSubmission/
+	rm -rf ./_BitSequencerSubmission.zip
 
 windows_submission: buildplugin
 	mkdir -p _BitSequencerSubmission
@@ -25,3 +26,5 @@ windows_submission: buildplugin
 	cp build/BitSequencer.jar _BitSequencerSubmission/
 	cp 00README.txt eSOSRules.art informalAndInternal.txt ValueUserPlugin.java _BitSequencerSubmission/
 	cp scripts/submission\_scripts/* _BitSequencerSubmission/
+	zip -r _BitSequencerSubmission.zip _BitSequencerSubmission/
+
