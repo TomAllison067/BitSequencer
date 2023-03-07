@@ -312,7 +312,7 @@ forBody(_boolCondition, _body, _increment), _sig -> if(_boolCondition, seq(_body
 ---
 for(_init, _boolCondition, _incr, _body), _sig -> seq(_init, forBody(_boolCondition, _body, _incr)), _sig
 
--variable
+-deref
 ---
 deref(_R), _sig -> __get(_sig, _R), _sig
 
