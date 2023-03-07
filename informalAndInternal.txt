@@ -103,17 +103,17 @@ S.7 Domain specific operations
 BitSequencer provides concatenation, repetition and modulation for phrases. In this context, the '+' symbol acts as the concatenation operator, '*' as the 
 repetition operator and '^' as the modulation operator.
 
-'+' acts as follows:
-    phrase1 + phrase2: returns a single new phrase that is the concatenation of phrase1 and phrase2, 
-    e.g. "[C4:8, D5:4]" + "[E4:4, {C2/E2/G2}:8]" returns "[C4:8, D5:4, E4:4, {C2/E2/G2}:8]".
+'++' acts as follows:
+    phrase1 ++ phrase2: returns a single new phrase that is the concatenation of phrase1 and phrase2, 
+    e.g. "[C4:8, D5:4]" ++ "[E4:4, {C2/E2/G2}:8]" returns "[C4:8, D5:4, E4:4, {C2/E2/G2}:8]".
     
-'*' acts as follows:
-    phrase1 * k: returns a new phrase consisting of k instances of phrase1 concatenated, e.g. "[C4:4, E4:4, G4:4]" * 2
+'**' acts as follows:
+    phrase1 ** k: returns a new phrase consisting of k instances of phrase1 concatenated, e.g. "[C4:4, E4:4, G4:4]" ** 2
     returns "[C4:4, E4:4, G4:4, C4:4, E4:4, G4:4]".
 
-'^' acts as follows:
-    phrase1 ^ k: returns a new phrase consisting of the notes of phrase1 modulated by k semitones, e.g.
-    "[C4:4, E4:4, G4:4]" ^ 5 returns "[F4:4, A4:4, C5:4]", and "[C4:4, E4:4, G4:4]" ^ -4 returns "[G#3:4, C4:4, D#4:4]".
+'^^' acts as follows:
+    phrase1 ^^ k: returns a new phrase consisting of the notes of phrase1 modulated by k semitones, e.g.
+    "[C4:4, E4:4, G4:4]" ^^ 5 returns "[F4:4, A4:4, C5:4]", and "[C4:4, E4:4, G4:4]" ^^ -4 returns "[G#3:4, C4:4, D#4:4]".
 
 Signatures for the operations above can be found in section B.
 

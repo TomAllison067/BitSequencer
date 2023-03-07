@@ -78,7 +78,7 @@ e4 ::= e5^^
 
 (* Multiplication/Division *)
 e5 ::= e6^^
-  | e5 mult^^ e6
+  | e5 mul^^ e6
   | e5 div^^ e6
 
 (* Exponentiation *)
@@ -96,9 +96,9 @@ e7 ::= integer^^
 deref ::= identifier
 
 (* Phrase operators *)
-concat ::= '+'^
-repeat ::= '*'^
-modulate ::= '^'^
+concat ::= '++'^
+repeat ::= '**'^
+modulate ::= '^^'^
 
 (* Integer operators *)
 negate ::= '-'^
@@ -112,7 +112,7 @@ le ::= '<='^
 ge ::= '>='^
 sub ::= '-'^
 add ::= '+'^
-mult ::= '*'^
+mul ::= '*'^
 div ::= '/'^
 exp ::= '^'^
 (*************************************)
