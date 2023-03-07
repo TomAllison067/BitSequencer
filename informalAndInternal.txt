@@ -29,7 +29,7 @@ Variables can be derefenced to obtain their integer or string value stored in th
 
 S.3 Predicates
 --------------
-BitSequencer allows comparison of integers using relational operators that return a boolean result:
+BitSequencer allows comparison of two integers using relational operators that return a boolean result:
 x > y       x greater than y
 x < y       x less than y
 x >= y      x greater than or equal to y
@@ -37,14 +37,13 @@ x <= y      x less than or equal to y
 x != y      x not equal to y
 x == y      x equal to y
 
-Chained relational operators can be chained, e.g. "9 > 8 > 7", but be careful - they are evaluated to integer values (1 for true, 0 for false)
-and are left-associative, i.e. "9 > 8 > 7" will evaluate as "1 > 7" rather than "9 > 8 && 8 > 7". 
-
 BitSequencer also allows boolean comparions logical AND and logical OR:
 x && y      x is true and y is true
 x || y      x is true or y is true
 
 Any non-zero value (positive or negative integers) are regarded as true, and 0 is regarded as false.
+
+Boolean literals are written with the keywords 'True' and 'False'.
 
 S.4 Selection statements
 ------------------------
@@ -206,6 +205,12 @@ Integer not-equals, E1 ne E2
 eq(_E1:__int32, _E2:__int32):__boolean 
 Integer equality, E1 equals E2
 
+and(_E1:__boolean, E2:__boolean):__boolean
+Boolean logical AND, E1 and E2
+
+or(_E1:__boolean, E2:__boolean):__boolean
+Boolean logical OR, E1 or E2
+
 concat(_a:__string, _b:__string):__string
 Return a new phrase that is the concatenation of phrase _a and _b_.
 
@@ -227,6 +232,7 @@ Selection, if _P evaluates to true then execute _S1, else execute _S2
 while(_P:__bool, _C1, _C2)
 Iteration, while _P is true execute _S1, else execute _S2
 
+assign(_ID:__quote, __n:__bool) bind _n to name _ID in variables map
 assign(_ID:__quote, __n:__int32) bind _n to name _ID in variables map
 assign(_ID:__quote, __n:__string) bind _n to name _ID in variables map 
 deref(_N):__int retrieve binding for name _N in variables map
