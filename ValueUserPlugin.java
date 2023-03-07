@@ -42,6 +42,7 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
       return "BeatSequencer";
   }
 
+  // Lazy-instantiate the music player (so test programs that don't actually use one aren't slowed down by it)
   private void _instantiate() {
     if (musicPlayer == null) {
       musicPlayer = new MiniMusicPlayer();

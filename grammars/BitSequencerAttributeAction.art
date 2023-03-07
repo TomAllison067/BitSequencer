@@ -21,6 +21,7 @@ support {
   /* Maps midi channels to phrases. Set with `LOAD_CONCURRENT` and cleared after played by `PLAY_CONCURRENT` */
   Map<Integer, String> concurrentChannels = new HashMap<Integer, String>();
 
+  // Lazy-instantiate the music player (so test programs that don't actually use one aren't slowed down by it)
   void _instantiate() {
     if (musicPlayer == null)
       musicPlayer = new MiniMusicPlayer();
