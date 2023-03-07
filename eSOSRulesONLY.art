@@ -7,7 +7,12 @@ assign(_ID, _str), _sig -> __done, __put(_sig, _ID, _str)
 -assignInt
 _n |> __int32(_)   
 ---
-assign(_X, _n), _sig -> __done, __put(_sig, _X, _n)
+assign(_ID, _n), _sig -> __done, __put(_sig, _ID, _n)
+
+-assignBool
+_b |> __bool(_)
+---
+assign(_ID, _b), _sig -> __done, __put(_sig, _ID, _b)
 
 -assignIntResolve
 _E, _sig -> _I, _sigP 
@@ -18,6 +23,11 @@ assign(_X,_E), _sig -> assign(_X, _I), _sigP
 _str, _sig -> _strP, _sigP
 ---
 assign(_ID, _str), _sig -> assign(_ID, _strP), _sigP
+
+-assignBoolResolve
+_bool, _sig -> _boolP, _sigP
+---
+assign(_ID, _bool), _sig -> assign(_ID, _boolP), _sigP
 
 // Returns __string
 -modulate
@@ -85,6 +95,16 @@ negate(_n), _sig -> __neg(_n), _sig
 _E1, _sig -> _I1, _sigP
 ---
 negate(_E1), _sig -> negate(_I1), _sigP
+
+-not
+_n |> __int32(_)
+---
+not(_n), _sig -> __not(_n), _sig
+
+-notResolve
+_E1, _sig -> _I1, _sigP
+---
+not(_E1), _sig -> not(_I1), _sigP
 
 -mul
 _n1 |> __int32(_) _n2 |> __int32(_)
@@ -221,6 +241,36 @@ eq(_n, _E2),_sig -> eq(_n, _I2), _sigP
 _E1, _sig -> _I1, _sigP 
 ---
 eq(_E1, _E2),_sig -> eq(_I1, _E2), _sigP
+
+-and
+_n1 |> __bool(_) _n2 |> __bool(_)
+---
+and(_n1, _n2), _sig -> __and(_n1, _n2), _sig
+
+-andRight
+_n |> __bool(_) _E2, _sig -> _I2, _sigP
+---
+and(_n, _E2), _sig -> and(_n, _I2), _sigP
+
+-andLeft
+_E1, _sig -> _I1, _sigP
+---
+and(_E1, _E2), _sig -> and(_I1, _E2), _sigP
+
+-or
+_n1 |> __bool(_) _n2 |> __bool(_)
+---
+or(_n1, _n2), _sig -> __or(_n1, _n2), _sig
+
+-orRight
+_n |> __bool(_) _E2, _sig -> _I2, _sigP
+---
+or(_n, _E2), _sig -> or(_n, _I2), _sigP
+
+-orLeft
+_E1, _sig -> _I1, _sigP
+---
+or(_E1, _E2), _sig -> or(_I1, _E2), _sigP
 
 // == CONTROL FLOW ==
 -ifTrue 

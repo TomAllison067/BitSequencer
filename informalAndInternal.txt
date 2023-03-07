@@ -37,6 +37,14 @@ x <= y      x less than or equal to y
 x != y      x not equal to y
 x == y      x equal to y
 
+Chained relational operators can be chained, e.g. "9 > 8 > 7", but be careful - they are evaluated to integer values (1 for true, 0 for false)
+and are left-associative, i.e. "9 > 8 > 7" will evaluate as "1 > 7" rather than "9 > 8 && 8 > 7". 
+
+BitSequencer also allows boolean comparions logical AND and logical OR:
+x && y      x is true and y is true
+x || y      x is true or y is true
+
+Any non-zero value (positive or negative integers) are regarded as true, and 0 is regarded as false.
 
 S.4 Selection statements
 ------------------------

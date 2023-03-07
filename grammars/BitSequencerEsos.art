@@ -1,5 +1,5 @@
 (**** Entry ****)
-statement ::= seq^^ | assign^^ | setBpm^^ | play^^ | playConcurrent^^ | directive^^
+statement ::= seq^^ | assign^^ | setBpm^^ | play^^ | playConcurrent^^ | directive^^ 
 (***************)
 
 (**** Directives ****)
@@ -12,6 +12,7 @@ setChannelInstrument ::= '_SET_INSTRUMENT'^ integer integer ';'^
 seq ::= statement statement
 
 assign ::= identifier '='^ phrase0 ';'^
+  | identifier '='^ e0 ';'^
 
 play ::= 
   'play'^ '('^ integer ','^ phrase0 ')'^ ';'^
@@ -22,6 +23,7 @@ playConcurrent ::=
 concChannel ::= integer ':'^ phrase0
   | integer ':'^ phrase0 ','^ concChannel
 
+(* Phrase expressions *)
 (* Concatenation *)
 phrase0 ::= phrase1^^
   | phrase0 concat^^ phrase1
@@ -39,10 +41,45 @@ phrase3 ::= string^^
   | deref^^ 
   | '('^ phrase0^^ ')'^
 
+(* Integer expressions *)
+(* Logical OR *)
 e0 ::= e1^^
-  | negate^^ e0
+  | e0 or^^ e1
+
+(* Logical AND *)
+e1 ::= e2^^
+  | e1 and^^ e2
+  | e1 or^^ e2
+
+(* Equality or inequality *)
+e2 ::= e3^^
+  | e2 eq^^ e3
+  | e2 ne^^ e3
  
-e1 ::= integer^^
+(* Relational *)
+e3 ::= e4^^
+  | e3 lt^^ e4
+  | e3 gt^^ e4
+  | e3 le^^ e4
+  | e4 ge^^ e4
+
+(* Addition/Subtraction *)
+e4 ::= e5^^
+  | e4 sub^^ e5
+  | e4 add^^ e5
+
+(* Multiplication/Division *)
+e5 ::= e6^^
+  | e5 mult^^ e6
+  | e5 div^^ e6
+
+(* Exponentiation *)
+e6 ::= e7^^
+  | e7 exp^^ e6
+
+(* Integers, and parentheses *)
+e7 ::= integer^^
+  | boolean^^
   | '('^ e0^^ ')'^
 (***********************************)
 
@@ -56,7 +93,19 @@ modulate ::= '^'^
 
 (* Integer operators *)
 negate ::= '-'^
-(*************************************)
+or ::= '||'^
+and ::= '&&'^
+eq ::= '=='^
+ne ::= '!='^
+lt ::= '<'^
+gt ::= '>'^
+le ::= '<='^
+ge ::= '>='^
+sub ::= '-'^
+add ::= '+'^
+mult ::= '*'^
+div ::= '/'^
+exp ::= '^'^
 
 (**** Builtins ****)
 identifier ::= &ID^^
@@ -77,3 +126,8 @@ string <leftExtent:int rightExtent:int lexeme:String v:String>
 integer <leftExtent:int rightExtent:int lexeme:String v:ARTValueInteger32> ::= 
   &INTEGER^^ { integer.lexeme = artLexeme(integer.leftExtent, integer.rightExtent); 
   integer.v = new ARTValueInteger32(artLexemeAsInteger(integer.leftExtent, integer.rightExtent)); }
+
+boolean ::= True^^ | False^^
+
+True ::= 'True'^
+False ::= 'Talse'^
