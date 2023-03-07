@@ -1,0 +1,148 @@
+prelude {
+import java.util.Map;
+import java.util.HashMap;
+import BitSequencer.Bindings.*;
+import BitSequencer.*;
+}
+
+support {
+  Map<String, BindingInterface> symbolTable = new HashMap<>();
+}
+
+(**** Entry ****)
+statement ::= seq^^ | assign^^ ';'^ | play^^ ';'^ | playConcurrent^^ ';'^ | if^^ | while^^ | for^^ | directive^^ ';'^
+(***************)
+
+(**** Directives ****)
+directive ::= setBpm^^ | setChannelInstrument^^ | printAvailableInstruments^^
+setBpm ::= '_SET_BPM'^ integer
+setChannelInstrument ::= '_SET_INSTRUMENT'^ integer integer
+printAvailableInstruments ::= '_PRINT_INSTRUMENTS'^
+(********************)
+
+(**** Sequencing, statements and expressions ****)
+seq ::= statement statement
+
+if ::= 'if'^ e0 'do'^ statement 'else'^ statement 'done'^
+  | 'if'^ e0 'do'^ statement 'done'^
+
+while ::=  'while'^ e0 'do'^ statement 'done'^
+
+for ::= 'for'^ '('^ assign ';'^ e0 ';'^ assign ')'^ 'do'^ statement 'done'^
+
+assign ::= identifier '='^ phrase0
+  | identifier '='^ e0
+
+play ::= 
+  'play'^ '('^ integer ','^ phrase0 ')'^
+
+playConcurrent ::=
+  'playConcurrent'^ '('^ concChannel ')'^
+
+concChannel ::= integer ':'^ phrase0
+  | integer ':'^ phrase0 ','^ concChannel
+
+(* Phrase expressions *)
+(* Concatenation *)
+phrase0 ::= phrase1^^
+  | phrase0 concat^^ phrase1
+
+(* Repetition *)
+phrase1 ::= phrase2^^
+  | phrase1 repeat^^ e0
+
+(* Modulation *)
+phrase2 ::= phrase3^^
+  | phrase2 modulate^^ e0
+
+(* Strings, derefences and parentheses *)
+phrase3 ::= string^^
+  | deref^^ 
+  | '('^ phrase0^^ ')'^
+
+(* Integer expressions *)
+(* Logical OR *)
+e0 ::= e1^^
+  | e0 or^^ e1
+
+(* Logical AND *)
+e1 ::= e2^^
+  | e1 and^^ e2
+  | e1 or^^ e2
+
+(* Equality or inequality *)
+e2 ::= e3^^
+  | e2 eq^^ e3
+  | e2 ne^^ e3
+ 
+(* Relational *)
+e3 ::= e4^^
+  | e3 lt^^ e4
+  | e3 gt^^ e4
+  | e3 le^^ e4
+  | e4 ge^^ e4
+
+(* Addition/Subtraction *)
+e4 ::= e5^^
+  | e4 sub^^ e5
+  | e4 add^^ e5
+
+(* Multiplication/Division *)
+e5 ::= e6^^
+  | e5 mul^^ e6
+  | e5 div^^ e6
+
+(* Exponentiation *)
+e6 ::= e7^^
+  | e7 exp^^ e6
+
+(* Negation *)
+e7 ::= e8^^
+  | negate^^ e7
+
+(* Integers, and parentheses *)
+e8 ::= integer^^
+  | boolean^^
+  | '('^ e0^^ ')'^
+  | deref^^
+(***********************************)
+
+(**** Operators and dereferencing ****)
+deref ::= identifier
+
+(* Phrase operators *)
+concat ::= '++'^
+repeat ::= '**'^
+modulate ::= '^'^
+
+(* Integer operators *)
+negate ::= '-'^
+or ::= '||'^
+and ::= '&&'^
+eq ::= '=='^
+ne ::= '!='^
+lt ::= '<'^
+gt ::= '>'^
+le ::= '<='^
+ge ::= '>='^
+sub ::= '-'^
+add ::= '+'^
+mul ::= '*'^
+div ::= '/'^
+exp ::= '^'^
+negate ::= '-'^
+(*************************************)
+
+(**** Builtins ****)
+identifier ::= &ID^^
+
+ID ::= &ID^^ 
+
+string ::= &STRING_DQ^^ 
+
+integer ::= &INTEGER^^ 
+
+boolean ::= True^^ | False^^
+
+True ::= 'True'^
+False ::= 'Talse'^

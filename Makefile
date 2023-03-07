@@ -1,7 +1,7 @@
 # Compile the BitSequencer java backend
 buildplugin:
-	javac  -d ./build -cp ".:BitSequencer" BitSequencer/*.java
-	cd build && jar cvf ./BitSequencer.jar ./BitSequencer/* && cd ..
+	javac  -d ./build -cp ".:BitSequencer" BitSequencer/**/*.java
+	cd build && jar cvf ./BitSequencer.jar ./BitSequencer/* ./BitSequencer/Bindings/* && cd ..
 	javac  -d ./build -cp ".:./ART/art.jar:./build/BitSequencer.jar" ValueUserPlugin.java
 	cd build && jar uf ./BitSequencer.jar *.class && cd ..
 
@@ -39,8 +39,8 @@ esos: parse_esos
 parse_aa: clean buildplugin
 	java -cp ".:./ART/art.jar" uk.ac.rhul.cs.csle.art.v3.ARTV3 grammars/BitSequencerAttributeAction.art
 	javac -Xlint -cp ".:./ART/art.jar" ARTGeneratedParser.java ARTGeneratedLexer.java;
-	mv ARTGenerated* *.dot term.txt build/
-	java -cp ".:./ART/art.jar:./build/BitSequencer.jar" ARTTest $2 $3 $4 $5 $6 $7 $8 $9 programs/$(program).str +phaseAG +showAll 
+	java -cp ".:./ART/art.jar:./build/BitSequencer.jar" ARTTest $2 $3 $4 $5 $6 $7 $8 $9 programs/$(program).str +phaseAG
+	mv ARTGenerated* build/
 
 clean:
 	rm -rf term.txt
