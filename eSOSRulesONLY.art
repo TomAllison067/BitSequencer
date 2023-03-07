@@ -304,6 +304,15 @@ if(_E,_C1,_C2),_sig -> if(_B, _C1, _C2), _sigP
 ---
 while(_E, _C),_sig -> if(_E, seq(_C, while(_E,_C)), __done), _sig
 
+
+-forLoop
+---
+forLoop(_boolCondition, _incr, _body), _sig -> seq(if(_boolCondition, _body), seq(_incr, forLoop(_boolCondition, _incr, _body))), _sig
+
+-for
+---
+for(_init, _boolCondition, _incr, _body), _sig -> seq(_init, forLoop(_boolCondition, _incr, _body)), _sig
+
 -variable
 ---
 deref(_R), _sig -> __get(_sig, _R), _sig

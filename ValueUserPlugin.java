@@ -11,7 +11,7 @@ import BitSequencer.PhraseFactory;
 import BitSequencer.RunnablePlayer;
 
 public class ValueUserPlugin implements ValueUserPluginInterface {
-  private MiniMusicPlayer musicPlayer = new MiniMusicPlayer();
+  private MiniMusicPlayer musicPlayer;
   private PhraseFactory phraseFactory = new PhraseFactory();
   
   /* Beats per minute, defaults to 120. Set with `SET_BPM` */
@@ -58,6 +58,7 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
          * Argument 1: the channel
          * Argument 2: the phrase to play
          */
+        musicPlayer = new MiniMusicPlayer();
         int channel = (int) args[1].value();
         String phrase = (String) args[2].value();
         musicPlayer.setInstrument(channel, channelsToInstruments.getOrDefault(channel, 0));
@@ -81,6 +82,9 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
         int nRepeats = (int) args[2].value();
         return new __string(phraseFactory.repeatPhrase(phraseToRepeat, nRepeats));
       case PRINT_AVAILABLE_INSTRUMENTS: // 5
+        if (musicPlayer == null) {
+          musicPlayer = new MiniMusicPlayer();
+        }
         musicPlayer.printAllInstruments();
         break;
       case SET_INSTRUMENT: // 6

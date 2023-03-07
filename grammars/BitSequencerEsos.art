@@ -1,5 +1,5 @@
 (**** Entry ****)
-statement ::= seq^^ | assign^^ | setBpm^^ | play^^ | playConcurrent^^ | if^^ | while^^ | directive^^
+statement ::= seq^^ | assign^^ | setBpm^^ | play^^ | playConcurrent^^ | if^^ | while^^ | for^^ | directive^^
 (***************)
 
 (**** Directives ****)
@@ -16,6 +16,8 @@ if ::= 'if'^ e0 'do'^ statement 'else'^ statement 'done'^
   | 'if'^ e0 'do'^ statement 'done'^
 
 while ::=  'while'^ e0 'do'^ statement 'done'^
+
+for ::= 'for'^ '('^ assign e0 ';'^ assign ')'^ 'do'^ statement 'done'^
 
 assign ::= identifier '='^ phrase0 ';'^
   | identifier '='^ e0 ';'^
