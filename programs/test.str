@@ -4,10 +4,10 @@ _SET_INSTRUMENT 2 32;
 
 cMaj = "[C4:8, .:16, E4:8, .:16, G4:8]";
 cMinChord = "[{C4/Eb4/G4}:4]";
-tune = cMaj * 2 + cMaj^1 * 4 + cMaj * 2;
+tune = cMaj ** 2 ++ cMaj^1 ** 4 ++ cMaj ** 2;
 
 bass = "[C4:4, .:8, C3:4, .:8, G3:4]";
-bassTune = (bass + bass^1 * 2 + bass)^-12;
+bassTune = (bass ++ bass^1 ** 2 ++ bass)^^-12;
 
 playConcurrent(
   1: tune,

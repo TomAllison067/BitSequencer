@@ -19,7 +19,8 @@ while i < 10 do
 done
 z = 6;
 
-for (i = 0; i < 5; i = i + 1;) do
-  i = i * 5;
+for (i = 0; i < 5; i = i + 1) do
+  i = i + 1;
   y = y + 1;
+  z = z * 2;
 done

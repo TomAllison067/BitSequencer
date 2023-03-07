@@ -55,17 +55,27 @@ if _pred do _statement done
 
 where _pred is a predicate as defined in section S.3, and _statement is any statement.
 
+S.5 Assignments statements
+--------------------------
+BitSequencer provides one selection statement:
 
-S.5 Iteration statements
+_identifier = _expression
+
+where _identifier is an alphanumeric identifier, and _expression is an expression resulting in a phrase or integer.
+
+S.6 Iteration statements
 ------------------------
-BitSequencer provides one iteration statement:
+BitSequencer provides two iteration statements:
 
 while _pred do _statement done
 
 where _pred is a predicate as defined in section S.3, and _statement is any statement.
 
+for (_assignment; _pred; _assignment;) do _body done
 
-S.6 Domain specific types
+where _assignment is an assignment statement as defined in section S.5, _pred is a boolean predicate and _statement is any statement.
+
+S.7 Domain specific types
 -------------------------
 BitSequencer has the following domain specific types:
 
@@ -98,7 +108,7 @@ Channel - a channel consists of a mapping from an integer key to an integer repr
   with the `setChannelInstrument` domain-specific operation. If no instrument is provided to a channel, any patterns played
   on the channel will be played with the default instrument 0 (Acoustic Grand Piano). 
 
-S.7 Domain specific operations
+S.8 Domain specific operations
 ------------------------------
 BitSequencer provides concatenation, repetition and modulation for phrases. In this context, the '+' symbol acts as the concatenation operator, '*' as the 
 repetition operator and '^' as the modulation operator.
@@ -232,8 +242,11 @@ Selection, if _P evaluates to true then execute _S1
 ifElse(_P:__boolean, _S1, _S2)
 Selection, if _P evaluates to true then execute _S1, else execute _S2
 
-while(_P:__bool, _C1, _C2)
-Iteration, while _P is true execute _S1, else execute _S2
+while(_P:__boolean, _S1, _S2)
+Iteration, while _P is true execute _S1, then execute _S2
+
+for(_S1, _P:__boolean, _S2, _S3)
+Iteration, execute _S1, then while _P is true execute _S3 and then _S2.
 
 assign(_ID:__quote, __n:__bool) bind _n to name _ID in variables map
 assign(_ID:__quote, __n:__int32) bind _n to name _ID in variables map

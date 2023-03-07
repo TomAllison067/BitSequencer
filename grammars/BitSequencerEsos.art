@@ -1,12 +1,12 @@
 (**** Entry ****)
-statement ::= seq^^ | assign^^ | setBpm^^ | play^^ | playConcurrent^^ | if^^ | while^^ | for^^ | directive^^
+statement ::= seq^^ | assign^^ ';'^ | play^^ ';'^ | playConcurrent^^ ';'^ | if^^ | while^^ | for^^ | directive^^ ';'^
 (***************)
 
 (**** Directives ****)
 directive ::= setBpm^^ | setChannelInstrument^^ | printAvailableInstruments^^
-setBpm ::= '_SET_BPM'^ integer ';'^
-setChannelInstrument ::= '_SET_INSTRUMENT'^ integer integer ';'^
-printAvailableInstruments ::= '_PRINT_INSTRUMENTS'^ ';'^
+setBpm ::= '_SET_BPM'^ integer
+setChannelInstrument ::= '_SET_INSTRUMENT'^ integer integer
+printAvailableInstruments ::= '_PRINT_INSTRUMENTS'^
 (********************)
 
 (**** Sequencing, statements and expressions ****)
@@ -17,16 +17,16 @@ if ::= 'if'^ e0 'do'^ statement 'else'^ statement 'done'^
 
 while ::=  'while'^ e0 'do'^ statement 'done'^
 
-for ::= 'for'^ '('^ assign e0 ';'^ assign ')'^ 'do'^ statement 'done'^
+for ::= 'for'^ '('^ assign ';'^ e0 ';'^ assign ')'^ 'do'^ statement 'done'^
 
-assign ::= identifier '='^ phrase0 ';'^
-  | identifier '='^ e0 ';'^
+assign ::= identifier '='^ phrase0
+  | identifier '='^ e0
 
 play ::= 
-  'play'^ '('^ integer ','^ phrase0 ')'^ ';'^
+  'play'^ '('^ integer ','^ phrase0 ')'^
 
 playConcurrent ::=
-  'playConcurrent'^ '('^ concChannel ')'^ ';'^
+  'playConcurrent'^ '('^ concChannel ')'^
 
 concChannel ::= integer ':'^ phrase0
   | integer ':'^ phrase0 ','^ concChannel
