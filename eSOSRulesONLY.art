@@ -360,7 +360,7 @@ repeat(_phrase, _n), _sig -> repeat(_phraseP, _n), _sigP
 
 -printAvailableInstruments
 ---
-printAvailableInstruments(), _sig -> __user(5)
+printAvailableInstruments(), _sig -> __user(5), _sig
 
 // No resolving ints for this one - just set a given channel to an instrument
 -setChannelInstrument

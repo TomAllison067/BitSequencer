@@ -8,10 +8,8 @@ if 2 > 1 do
  y = 2;
 done
 
-z = 5;
 
 i = 0;
-
 while i < 10 do
   i = i + 1;
   if i == 5 do
@@ -20,3 +18,4 @@ while i < 10 do
     _PRINT_INSTRUMENTS;
   done
 done
+z = 6;
