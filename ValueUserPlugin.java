@@ -42,6 +42,12 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
       return "BeatSequencer";
   }
 
+  private void _instantiate() {
+    if (musicPlayer == null) {
+      musicPlayer = new MiniMusicPlayer();
+    }
+  }
+
   @Override
   public Value user(Value... args) throws ARTException {
     for (Value v : args) {
@@ -50,6 +56,7 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
     OpCode opCode = OpCode.values()[(int) args[0].value()];
     switch (opCode) {
       case SET_BPM:         // 0
+        _instantiate();
         this.bpm = (int) args[1].value();
         musicPlayer.setBpm(this.bpm);
         break;
@@ -58,7 +65,7 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
          * Argument 1: the channel
          * Argument 2: the phrase to play
          */
-        musicPlayer = new MiniMusicPlayer();
+        _instantiate();
         int channel = (int) args[1].value();
         String phrase = (String) args[2].value();
         musicPlayer.setInstrument(channel, channelsToInstruments.getOrDefault(channel, 0));
@@ -82,13 +89,12 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
         int nRepeats = (int) args[2].value();
         return new __string(phraseFactory.repeatPhrase(phraseToRepeat, nRepeats));
       case PRINT_AVAILABLE_INSTRUMENTS: // 5
-        if (musicPlayer == null) {
-          musicPlayer = new MiniMusicPlayer();
-        }
+        _instantiate();
         musicPlayer.printAllInstruments();
         break;
       case SET_INSTRUMENT: // 6
         // Set a given midi channel (between 0-15) to an instrument (0-127)
+        _instantiate();
         int channelIndex = (int) args[1].value();
         int instrument = (int) args[2].value();
         channelsToInstruments.put(channelIndex, instrument);

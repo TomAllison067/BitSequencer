@@ -26,7 +26,7 @@ windows_submission: buildplugin
 parse_esos: clean buildplugin 
 	java -cp ".:./ART/art.jar" uk.ac.rhul.cs.csle.art.v3.ARTV3 grammars/BitSequencerEsos.art
 	javac -Xlint -cp ".:./ART/art.jar" ARTGeneratedParser.java ARTGeneratedLexer.java; \
-	java -cp ".:./ART/art.jar" ARTTest $2 $3 $4 $5 $6 $7 $8 $9 programs/$(program).str +phaseAG +showAll;
+	java -cp ".:./ART/art.jar" ARTTest $2 $3 $4 $5 $6 $7 $8 $9 programs/$(program).str +phaseAG +showAll
 	mv ARTGenerated* *.dot term.txt build/
 	echo "$$(cat eSOSRulesONLY.art) !try $$(cat build/term.txt), __map" > build/term.art
 
@@ -34,6 +34,13 @@ parse_esos: clean buildplugin
 esos: parse_esos
 	java -cp ".:./ART/art.jar:./build/BitSequencer.jar" uk.ac.rhul.cs.csle.art.ART build/term.art
 # ========================================================= #
+
+# == Interpret programs using the attribute action grammar == #
+parse_aa: clean buildplugin
+	java -cp ".:./ART/art.jar" uk.ac.rhul.cs.csle.art.v3.ARTV3 grammars/BitSequencerAttributeAction.art
+	javac -Xlint -cp ".:./ART/art.jar" ARTGeneratedParser.java ARTGeneratedLexer.java;
+	mv ARTGenerated* *.dot term.txt build/
+	java -cp ".:./ART/art.jar:./build/BitSequencer.jar" ARTTest $2 $3 $4 $5 $6 $7 $8 $9 programs/$(program).str +phaseAG +showAll 
 
 clean:
 	rm -rf term.txt

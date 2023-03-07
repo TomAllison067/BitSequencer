@@ -85,8 +85,12 @@ e5 ::= e6^^
 e6 ::= e7^^
   | e7 exp^^ e6
 
+(* Negation *)
+e7 ::= e8^^
+  | negate^^ e7
+
 (* Integers, and parentheses *)
-e7 ::= integer^^
+e8 ::= integer^^
   | boolean^^
   | '('^ e0^^ ')'^
   | deref^^
@@ -98,7 +102,7 @@ deref ::= identifier
 (* Phrase operators *)
 concat ::= '++'^
 repeat ::= '**'^
-modulate ::= '^^'^
+modulate ::= '^'^
 
 (* Integer operators *)
 negate ::= '-'^
@@ -115,6 +119,7 @@ add ::= '+'^
 mul ::= '*'^
 div ::= '/'^
 exp ::= '^'^
+negate ::= '-'^
 (*************************************)
 
 (**** Builtins ****)
