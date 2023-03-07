@@ -273,18 +273,32 @@ _E1, _sig -> _I1, _sigP
 or(_E1, _E2), _sig -> or(_I1, _E2), _sigP
 
 // == CONTROL FLOW ==
--ifTrue 
----
-if(True, _C1, _C2),_sig -> _C1, _sig
 
--ifFalse 
+-ifTrue
 ---
-if(False, _C1, _C2),_sig -> _C2,_sig
+if(True, _C1), _sig -> _C1, _sig
+
+-ifFalse
+---
+if(False, _C1), _sig -> __done, _sig
 
 -ifResolve
-_E, _sig -> _EP, _sigP
+_E, _sig -> _B, _sigP
 ---
-if(_E,_C1,_C2),_sig -> if(_EP, _C1, _C2), _sigP
+if(_E, _C1), _sig -> if(_B, _C1), _sigP
+
+-ifElseTrue 
+---
+if(True, _C1, _C2), _sig -> _C1, _sig
+
+-ifElseFalse 
+---
+if(False, _C1, _C2), _sig -> _C2, _sig
+
+-ifElseResolve
+_E, _sig -> _B, _sigP
+---
+if(_E,_C1,_C2),_sig -> if(_B, _C1, _C2), _sigP
 
 -while
 ---

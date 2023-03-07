@@ -50,8 +50,8 @@ S.4 Selection statements
 
 BitSequencer provides two selection statements:
 
-if _pred then _statement else _statement
-if _pred then _statement
+if _pred do _statement else _statement done
+if _pred do _statement done
 
 where _pred is a predicate as defined in section S.3, and _statement is any statement.
 
@@ -60,7 +60,7 @@ S.5 Iteration statements
 ------------------------
 BitSequencer provides one iteration statement:
 
-while _pred do _statement
+while _pred do _statement done
 
 where _pred is a predicate as defined in section S.3, and _statement is any statement.
 
@@ -226,7 +226,10 @@ Return a new phrase that is the modulaltion of _phrase by _n semitones
 seq(_S1, _S2)
 Execute _S1, followed by _S2.
 
-if(_P:__bool, _S1, _S2)
+if(_P:__boolean, _S1)
+Selection, if _P evaluates to true then execute _S1
+
+ifElse(_P:__boolean, _S1, _S2)
 Selection, if _P evaluates to true then execute _S1, else execute _S2
 
 while(_P:__bool, _C1, _C2)

@@ -1,15 +1,21 @@
 (**** Entry ****)
-statement ::= seq^^ | assign^^ | setBpm^^ | play^^ | playConcurrent^^ | directive^^ 
+statement ::= seq^^ | assign^^ | setBpm^^ | play^^ | playConcurrent^^ | if^^ | while^^ | directive^^
 (***************)
 
 (**** Directives ****)
-directive ::= setBpm^^ | setChannelInstrument^^
+directive ::= setBpm^^ | setChannelInstrument^^ | printAvailableInstruments^^
 setBpm ::= '_SET_BPM'^ integer ';'^
 setChannelInstrument ::= '_SET_INSTRUMENT'^ integer integer ';'^
+printAvailableInstruments ::= '_PRINT_INSTRUMENTS'^ ';'^
 (********************)
 
-(**** Sequencing and statements ****)
+(**** Sequencing, statements and expressions ****)
 seq ::= statement statement
+
+if ::= 'if'^ e0 'do'^ statement 'else'^ statement 'done'^
+  | 'if'^ e0 'do'^ statement 'done'^
+
+while ::=  'while'^ e0 'do'^ statement 'done'^
 
 assign ::= identifier '='^ phrase0 ';'^
   | identifier '='^ e0 ';'^
@@ -81,6 +87,7 @@ e6 ::= e7^^
 e7 ::= integer^^
   | boolean^^
   | '('^ e0^^ ')'^
+  | deref^^
 (***********************************)
 
 (**** Operators and dereferencing ****)
