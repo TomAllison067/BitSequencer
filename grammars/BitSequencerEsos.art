@@ -57,7 +57,6 @@ e0 ::= e1^^
 (* Logical AND *)
 e1 ::= e2^^
   | e1 and^^ e2
-  | e1 or^^ e2
 
 (* Equality or inequality *)
 e2 ::= e3^^
@@ -124,8 +123,6 @@ negate ::= '-'^
 
 (**** Builtins ****)
 identifier ::= &ID^^
-
-ID ::= &ID^^ 
 
 string ::= &STRING_DQ^^ 
 

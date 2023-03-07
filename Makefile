@@ -1,3 +1,10 @@
+# When running `make parse_aa program=<program>`, you can add `logging=true` and/or `showAll=true` to 
+# view built-in logging in the semantic actions and toggle the `+showAll` option.
+SHOWALL = 
+ifeq ($(showAll), true)
+	SHOWALL := +showAll
+endif
+
 # Compile the BitSequencer java backend
 buildplugin:
 	javac  -d ./build -cp ".:BitSequencer" BitSequencer/**/*.java
@@ -22,7 +29,8 @@ windows_submission: buildplugin
 # == Interpet programs using the eSOS grammar with these == #
 # run `make parse_esos program=<program in programs/>` or `make esos program=<program in programs/>`
 
-# Parse a program in programs/ using the eSOS grammar to create term.txt in the build/ dir
+# Parse a program in programs/ using the eSOS grammar to create term.txt in the build dir
+# Note, esos NEEDS +showAll so it is not an option here
 parse_esos: clean buildplugin 
 	java -cp ".:./ART/art.jar" uk.ac.rhul.cs.csle.art.v3.ARTV3 grammars/BitSequencerEsos.art
 	javac -Xlint -cp ".:./ART/art.jar" ARTGeneratedParser.java ARTGeneratedLexer.java; \
@@ -39,9 +47,9 @@ esos: parse_esos
 parse_aa: clean buildplugin
 	java -cp ".:./ART/art.jar" uk.ac.rhul.cs.csle.art.v3.ARTV3 grammars/BitSequencerAttributeAction.art
 	javac -Xlint -cp ".:./ART/art.jar" ARTGeneratedParser.java ARTGeneratedLexer.java;
-	java -cp ".:./ART/art.jar:./build/BitSequencer.jar" ARTTest $2 $3 $4 $5 $6 $7 $8 $9 programs/$(program).str +phaseAG
+	java -Dlogging=$(logging) -cp ".:./ART/art.jar:./build/BitSequencer.jar" ARTTest $2 $3 $4 $5 $6 $7 $8 $9 programs/$(program).str +phaseAG $(SHOWALL)
 	mv ARTGenerated* build/
-
+# =========================================================== #
 clean:
 	rm -rf term.txt
 	rm -rf *.dot

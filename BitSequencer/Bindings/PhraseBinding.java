@@ -1,11 +1,10 @@
 package BitSequencer.Bindings;
 
 public class PhraseBinding implements BindingInterface {
-  private String id;
   private Object value;
 
-  public String getId() {
-    return this.id;
+  public PhraseBinding(Object value) {
+    this.value = value;
   }
 
   public Object getValue() {

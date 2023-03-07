@@ -1,115 +1,213 @@
 prelude {
-import java.util.Map;
-import java.util.HashMap;
-import BitSequencer.Bindings.*;
-import BitSequencer.*;
+  import java.util.List;
+  import java.util.ArrayList;
+  import java.util.Map;
+  import java.util.HashMap;
+  import BitSequencer.Bindings.*;
+  import BitSequencer.*;
 }
 
 support {
   Map<String, BindingInterface> symbolTable = new HashMap<>();
+  PhraseFactory phraseFactory = new PhraseFactory();
+  
+  MiniMusicPlayer musicPlayer;
+
+  int _bpm = 120;
+
+  /* Map of midi channels to instrument numbers. Set with `SET_INSTRUMENT` */
+  Map<Integer, Integer> channelsToInstruments = new HashMap<Integer, Integer>();
+  
+  /* Maps midi channels to phrases. Set with `LOAD_CONCURRENT` and cleared after played by `PLAY_CONCURRENT` */
+  Map<Integer, String> concurrentChannels = new HashMap<Integer, String>();
+
+  void _instantiate() {
+    if (musicPlayer == null)
+      musicPlayer = new MiniMusicPlayer();
+  }
+
+  void printAllInstruments() {
+    _instantiate();
+    musicPlayer.printAllInstruments();
+  }
+
+  void playPhrase(int channel, String phrase) {
+    _instantiate();
+    musicPlayer.setInstrument(channel, channelsToInstruments.getOrDefault(channel, 0));
+    musicPlayer.playPhrase(channel, phraseFactory.constructMeasureListFromPhraseString(phrase));
+  }
+
+  void setInstrument(int channel, int instrument) {
+    channelsToInstruments.put(channel, instrument);
+  }
+
+  void loadConcurrent(int channel, String phrase) {
+    concurrentChannels.put(channel, phrase);
+  }
+
+  void playConcurrent() {
+    try {
+      List<Thread> threads = new ArrayList<Thread>(concurrentChannels.size());
+      for (Map.Entry<Integer, String> e : concurrentChannels.entrySet()) {
+        threads.add(
+          new Thread(
+            new RunnablePlayer(e.getKey(), channelsToInstruments.getOrDefault(e.getKey(), 0), e.getValue(), _bpm)
+          )
+        );
+      }
+      for (Thread thread : threads) {
+        thread.start();
+      }
+      for (Thread thread : threads) {
+        thread.join();
+      }
+    } catch (InterruptedException e) {
+      /* ignore  */
+    }
+    concurrentChannels.clear();
+  }
+
+  void setBpm(int bpm) {
+    _instantiate();
+    _bpm = bpm;
+    musicPlayer.setBpm(bpm);
+  }
+
+  void log(String msg) {
+    if (Boolean.getBoolean("logging")) {
+      System.out.println("(log) " + msg);
+    }
+  }
+
 }
 
 (**** Entry ****)
-statement ::= seq^^ | assign^^ ';'^ | play^^ ';'^ | playConcurrent^^ ';'^ | if^^ | while^^ | for^^ | directive^^ ';'^
+statement ::= seq^^ | assign^^ ';'^ | play^^ ';'^ | playConcurrent^^ ';'^ | if_stmt^^ | while_stmt^^ | for_stmt^^ | directive^^ ';'^
 (***************)
 
 (**** Directives ****)
 directive ::= setBpm^^ | setChannelInstrument^^ | printAvailableInstruments^^
-setBpm ::= '_SET_BPM'^ integer
-setChannelInstrument ::= '_SET_INSTRUMENT'^ integer integer
-printAvailableInstruments ::= '_PRINT_INSTRUMENTS'^
+setBpm ::= '_SET_BPM'^ integer                              { setBpm(integer1.v); }
+setChannelInstrument ::= '_SET_INSTRUMENT'^ integer integer { channelsToInstruments.put(integer1.v, integer2.v); }
+printAvailableInstruments ::= '_PRINT_INSTRUMENTS'^         { printAllInstruments(); }
 (********************)
 
 (**** Sequencing, statements and expressions ****)
 seq ::= statement statement
 
-if ::= 'if'^ e0 'do'^ statement 'else'^ statement 'done'^
-  | 'if'^ e0 'do'^ statement 'done'^
+if_stmt ::= 
+  'if'^ e0 'do'^ statement< 'else'^ statement< 'done'^
+    { 
+      if (e01.v != 0) {
+        artEvaluate(if_stmt.statement1, statement1);
+      } else {
+        artEvaluate(if_stmt.statement2, statement2);
+      }
+    }
+  | 'if'^ e0 'do'^ statement< 'done'^
+    { 
+      if (e01.v != 0) {
+        artEvaluate(if_stmt.statement1, statement1);
+      }
+    }
 
-while ::=  'while'^ e0 'do'^ statement 'done'^
+while_stmt ::=  
+  'while'^ e0< 'do'^ statement< 'done'^
+  {
+    artEvaluate(while_stmt.e01, e01);
+    while (e01.v != 0) {
+      artEvaluate(while_stmt.statement1, statement1);
+      artEvaluate(while_stmt.e01, e01);
+    }
+  }
 
-for ::= 'for'^ '('^ assign ';'^ e0 ';'^ assign ')'^ 'do'^ statement 'done'^
+for_stmt ::= 'for'^ '('^ assign ';'^ e0< ';'^ assign< ')'^ 'do'^ statement< 'done'^
+  { 
+    artEvaluate(for_stmt.e01, e01);
+    while(e01.v != 0) {
+      artEvaluate(for_stmt.statement1, statement1);
+      artEvaluate(for_stmt.assign2, assign2);
+      artEvaluate(for_stmt.e01, e01);
+    }
+  }
 
-assign ::= identifier '='^ phrase0
-  | identifier '='^ e0
+assign ::= identifier '='^ phrase0    { symbolTable.put(identifier1.v, new PhraseBinding(phrase01.v)); log(identifier1.v + " = " + phrase01.v);}
+  | identifier '='^ e0                { symbolTable.put(identifier1.v, new PhraseBinding(e01.v)); log(identifier1.v + " = " + e01.v); }
 
 play ::= 
-  'play'^ '('^ integer ','^ phrase0 ')'^
+  'play'^ '('^ integer ','^ phrase0 ')'^  { playPhrase(integer1.v, phrase01.v); }
 
 playConcurrent ::=
-  'playConcurrent'^ '('^ concChannel ')'^
+  'playConcurrent'^ '('^ concChannel ')'^ { playConcurrent(); }
 
-concChannel ::= integer ':'^ phrase0
-  | integer ':'^ phrase0 ','^ concChannel
+concChannel ::= 
+  integer ':'^ phrase0                    { loadConcurrent(integer1.v, phrase01.v); }
+  | integer ':'^ phrase0 ','^ concChannel { loadConcurrent(integer1.v, phrase01.v); }
 
 (* Phrase expressions *)
 (* Concatenation *)
-phrase0 ::= phrase1^^
-  | phrase0 concat^^ phrase1
+phrase0 <v:String> ::= phrase1^^  { phrase0.v = phrase11.v; }
+  | phrase0 concat^^ phrase1      { phrase0.v = phraseFactory.concatPhraseFromPhraseString(phrase01.v, phrase11.v); }
 
 (* Repetition *)
-phrase1 ::= phrase2^^
-  | phrase1 repeat^^ e0
+phrase1 <v:String> ::= phrase2^^  { phrase1.v = phrase21.v; }
+  | phrase1 repeat^^ e0           { phrase1.v = phraseFactory.repeatPhrase(phrase11.v, e01.v); }
 
 (* Modulation *)
-phrase2 ::= phrase3^^
-  | phrase2 modulate^^ e0
+phrase2 <v:String> ::= phrase3^^  { phrase2.v = phrase31.v; }
+  | phrase2 modulate^^ e0         { phrase2.v = phraseFactory.modulatePhraseFromString(phrase21.v, e01.v); }
 
 (* Strings, derefences and parentheses *)
-phrase3 ::= string^^
-  | deref^^ 
-  | '('^ phrase0^^ ')'^
+phrase3 <v:String> ::= string^^   { phrase3.v = string1.v; }
+  | identifier^^                  { phrase3.v = (String) symbolTable.get(identifier1.v).getValue(); }
+  | '('^ phrase0^^ ')'^           { phrase3.v = phrase01.v; }
 
 (* Integer expressions *)
 (* Logical OR *)
-e0 ::= e1^^
-  | e0 or^^ e1
+e0 <v:Integer> ::= e1^^       { e0.v = e11.v; }
+  | e0 or^^ e1                { e0.v = e01.v != 0 || e11.v != 0 ? 1 : 0; }
 
 (* Logical AND *)
-e1 ::= e2^^
-  | e1 and^^ e2
-  | e1 or^^ e2
+e1 <v:Integer> ::= e2^^       { e1.v = e21.v; }
+  | e1 and^^ e2               { e1.v = e11.v != 0 && e11.v != 0 ? 1 : 0; }
 
 (* Equality or inequality *)
-e2 ::= e3^^
-  | e2 eq^^ e3
-  | e2 ne^^ e3
+e2 <v:Integer> ::= e3^^       { e2.v = e31.v; }
+  | e2 eq^^ e3                { e2.v = e21.v.equals(e31.v) ? 1 : 0; }
+  | e2 ne^^ e3                { e2.v = !(e21.v.equals(e31.v)) ? 1 : 0; }
  
 (* Relational *)
-e3 ::= e4^^
-  | e3 lt^^ e4
-  | e3 gt^^ e4
-  | e3 le^^ e4
-  | e4 ge^^ e4
+e3 <v:Integer> ::= e4^^       { e3.v = e41.v; }
+  | e3 lt^^ e4                { e3.v = e31.v < e41.v? 1 : 0; }
+  | e3 gt^^ e4                { e3.v = e31.v > e41.v? 1 : 0; }
+  | e3 le^^ e4                { e3.v = e31.v <= e41.v? 1 : 0; }
+  | e4 ge^^ e4                { e3.v = e31.v >= e41.v? 1 : 0; }
 
 (* Addition/Subtraction *)
-e4 ::= e5^^
-  | e4 sub^^ e5
-  | e4 add^^ e5
+e4 <v:Integer> ::= e5^^       { e4.v = e51.v; }
+  | e4 sub^^ e5               { e4.v = e41.v - e51.v; }
+  | e4 add^^ e5               { e4.v = e41.v + e51.v; }
 
 (* Multiplication/Division *)
-e5 ::= e6^^
-  | e5 mul^^ e6
-  | e5 div^^ e6
+e5 <v:Integer> ::= e6^^       { e5.v = e61.v; }
+  | e5 mul^^ e6               { e5.v = e51.v * e61.v; }
+  | e5 div^^ e6               { e5.v = e51.v / e61.v; }
 
 (* Exponentiation *)
-e6 ::= e7^^
-  | e7 exp^^ e6
+e6 <v:Integer> ::= e7^^       { e6.v = e71.v; }
+  | e7 exp^^ e6               { e6.v = (int) Math.pow(e71.v, e61.v); }
 
 (* Negation *)
-e7 ::= e8^^
-  | negate^^ e7
+e7 <v:Integer> ::= e8^^       { e7.v = e81.v; }
+  | negate^^ e7               { e7.v = -e71.v; }
 
 (* Integers, and parentheses *)
-e8 ::= integer^^
-  | boolean^^
-  | '('^ e0^^ ')'^
-  | deref^^
+e8 <v:Integer> ::= integer^^  { e8.v = integer1.v; }
+  | '('^ e0^^ ')'^            { e8.v = e01.v; }
+  | identifier^^              { e8.v = (Integer) symbolTable.get(identifier1.v).getValue(); }
 (***********************************)
 
 (**** Operators and dereferencing ****)
-deref ::= identifier
-
 (* Phrase operators *)
 concat ::= '++'^
 repeat ::= '**'^
@@ -134,13 +232,14 @@ negate ::= '-'^
 (*************************************)
 
 (**** Builtins ****)
-identifier ::= &ID^^
+identifier <v:String leftExtent:int rightExtent:int>
+  ::= &ID^^         { identifier.v = artLexemeAsID(identifier.leftExtent, identifier.rightExtent); }
 
-ID ::= &ID^^ 
+string <v:String leftExtent:int rightExtent:int> 
+  ::= &STRING_DQ^^  { string.v = artLexemeAsString(string.leftExtent, string.rightExtent); } 
 
-string ::= &STRING_DQ^^ 
-
-integer ::= &INTEGER^^ 
+integer <v:int leftExtent:int rightExtent:int> 
+  ::= &INTEGER^^    { integer.v = artLexemeAsInteger(integer.leftExtent, integer.rightExtent); }
 
 boolean ::= True^^ | False^^
 
