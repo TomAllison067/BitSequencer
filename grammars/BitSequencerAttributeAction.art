@@ -240,8 +240,4 @@ string <v:String leftExtent:int rightExtent:int>
 
 integer <v:int leftExtent:int rightExtent:int> 
   ::= &INTEGER^^    { integer.v = artLexemeAsInteger(integer.leftExtent, integer.rightExtent); }
-
-boolean ::= True^^ | False^^
-
-True ::= 'True'^
-False ::= 'Talse'^
+  
