@@ -6,7 +6,7 @@ ifeq ($(showAll), true)
 endif
 
 # Compile the BitSequencer java backend
-buildplugin:
+buildplugin: clean
 	javac  -d ./build -cp ".:BitSequencer" BitSequencer/*.java BitSequencer/**/*.java
 	cd build && jar cvf ./BitSequencer.jar ./BitSequencer && cd ..
 	javac  -d ./build -cp ".:./ART/art.jar:./build/BitSequencer.jar" ValueUserPlugin.java
@@ -31,7 +31,7 @@ windows_submission: buildplugin
 
 # Parse a program in programs/ using the eSOS grammar to create term.txt in the build dir
 # Note, esos NEEDS +showAll so it is not an option here
-parse_esos: clean buildplugin 
+parse_esos: buildplugin 
 	java -cp ".:./ART/art.jar" uk.ac.rhul.cs.csle.art.v3.ARTV3 grammars/BitSequencerEsos.art
 	javac -Xlint -cp ".:./ART/art.jar" ARTGeneratedParser.java ARTGeneratedLexer.java; \
 	java -cp ".:./ART/art.jar" ARTTest $2 $3 $4 $5 $6 $7 $8 $9 programs/$(program).str +phaseAG +showAll
@@ -44,7 +44,7 @@ esos: parse_esos
 # ========================================================= #
 
 # == Interpret programs using the attribute action grammar == #
-parse_aa: clean buildplugin
+parse_aa: buildplugin
 	java -cp ".:./ART/art.jar" uk.ac.rhul.cs.csle.art.v3.ARTV3 grammars/BitSequencerAttributeAction.art
 	javac -Xlint -cp ".:./ART/art.jar" ARTGeneratedParser.java ARTGeneratedLexer.java;
 	java -Dlogging=$(logging) -cp ".:./ART/art.jar:./build/BitSequencer.jar" ARTTest $2 $3 $4 $5 $6 $7 $8 $9 programs/$(program).str +phaseAG $(SHOWALL)
