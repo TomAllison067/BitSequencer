@@ -25,8 +25,8 @@ for (i = 0; i < 3; i = i + 1) do
   done
 done
 
-synthSolo = "";
-bassAccompaniment = "";
+synthSolo1st4 = "";
+bassAccompaniment1st4 = "";
 
 sustainedLowC = "[{C2/C3}:1]";
 sustainedLowF = sustainedLowC^-7;
@@ -38,14 +38,21 @@ sustainedLowAb = sustainedLowA^-1;
 descending3rd16ths = "[D5:16, B5:16, G4:16]";
 descending3rd4th16ths = "[E5:16, C5:16, G4:16]";
 risingMinor3rd16ths = "[A5:16, C5:16]";
+risingSemitone16ths = "[E4:16, F4:16]";
 
 i = 0;
 while(i < 2) do
-  synthSolo = synthSolo ++ descending3rd16ths ** 2 ++ descending3rd4th16ths ** 2
+  synthSolo1st4 = synthSolo1st4 ++ descending3rd16ths ** 2 ++ descending3rd4th16ths ** 2
     ++ descending3rd16ths ** 3 ++ descending3rd16ths^-2 ** 3 ++ risingMinor3rd16ths;
-  bassAccompaniment = bassAccompaniment ++ sustainedLowC ** 2;
+  bassAccompaniment1st4 = bassAccompaniment1st4 ++ sustainedLowC ** 2;
   i = i + 1;
 done
+
+bassOutro = sustainedLowG ** 2 ++ sustainedLowC ** 3;
+synthOutro = "[.:8dot, C4:8dot, D4:8, E4:8dot, C4:8dot, D4:8]"
+  ++ "[E4:8dot, G4:8dot, E4:8, D4:8dot, C4:8dot, D4:8]"
+  ++ "[D4:4dot, E4:4dot, C4:4]"
+  ++ "[C4:1]" ** 2;
 
 playConcurrent(
   1: songIntroBass,
@@ -63,13 +70,11 @@ playConcurrent(
 );
 
 playConcurrent(
-  1: bassAccompaniment,
-  2: synthSolo);
-
-playConcurrent(
-  1: sustainedLowF ** 2 ++ sustainedLowG ** 2 ++ sustainedLowBb ** 2 ++ sustainedLowA ** 2 ++ sustainedLowAb ** 2
+  1: bassAccompaniment1st4,
+  2: synthSolo1st4
 );
 
 playConcurrent(
-  1: sustainedLowG ** 2 ++ sustainedLowC ** 3
+  1: bassOutro,
+  2: synthOutro^12
 );
