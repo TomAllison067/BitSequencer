@@ -21,7 +21,7 @@ while ::=  'while'^ e0 'do'^ statement 'done'^
 
 for ::= 'for'^ '('^ assign ';'^ e0 ';'^ assign ')'^ 'do'^ statement 'done'^
 
-switch ::= 'switch'^ '('^ e0 ')'^  switchBody^ 'done'^
+switch ::= 'switch'^ '('^ e0 ')'^  switchBody 'done'^
 
 switchBody ::= 'case'^ e0 ':'^ statement 'esac'^
   | 'case'^ e0 ':'^ statement 'esac'^ switchBody  

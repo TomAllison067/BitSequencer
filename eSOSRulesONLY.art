@@ -318,24 +318,40 @@ switchBody(_e2, _statement), _sig -> _e2, _statement, __done, _sig
 ---
 switchBody(_e2, _statement, _switchBody), _sig -> _e2, _statement, _switchBody, _sig
 
+-switchSingleCaseFalse
+_e1 |> __int32(_) _e2 |> __int32(_) __eq(_e1, _e2) |> False
+---
+switch(_e1, switchBody(_e2, _statement)), _sig -> __done, _sig
+
+-switchSingleCaseTrue
+_e1 |> __int32(_) _e2 |> __int32(_) __eq(_e1, _e2) |> True
+---
+switch(_e1, switchBody(_e2, _statement)), _sig -> seq(_statement, __done), _sig
+
+-switchSingleCaseResolveLeft
+_e1, _sig -> _e1P, _sigP
+---
+switch(_e1, switchBody(_e2, _statement)), _sig -> switch(_e1P, switchBody(_e2, _statement)), _sigP
+
 -switchTrue
 _e1 |> __int32(_) _e2 |> __int32(_) __eq(_e1, _e2) |> True
 ---
-switch(_e1, _e2, _statement, _switchBody), _sig -> seq(_statement, __done), _sig
+switch(_e1, switchBody(_e2, _statement, _switchBody)), _sig -> seq(_statement, __done), _sig
 
 -switchDone
+_switchBody |> __done
 ---
-switch(_e1, _e2, _statement, __done), _sig -> __done, _sig
+switch(_e1, switchBody(_e2, _statement, _switchBody)), _sig -> __done, _sig
 
 -switchFalse
 _e1 |> __int32(_) _e2 |> __int32(_) __eq(_e1, _e2) |> False _switchBody, _sig -> _e2P, _statementP, _switchBodyP, _sigP
 ---
-switch(_e1, _e2, _statement, _switchBody), _sig -> switch(_e1, _e2P, _statementP, _switchBodyP), _sigP
+switch(_e1, switchBody(_e2, _statement, _switchBody)), _sig -> switch(_e1, switchBody(_e2P, _statementP, _switchBodyP)), _sigP
 
 -switchResolveE1
 _e1, _sig -> _e1P, _sigP
 ---
-switch(_e1, _e2, _statement, _switchBody), _sig -> switch(_e1P, _e2, _statement, _switchBody), _sigP
+switch(_e1, switchBody(_e2, _statement, _switchBody)), _sig -> switch(_e1P, switchBody(_e2, _statement, _switchBody)), _sigP
 
 -deref
 ---
