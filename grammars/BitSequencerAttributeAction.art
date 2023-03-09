@@ -10,6 +10,7 @@ prelude {
 support {
   Map<String, BindingInterface> symbolTable = new HashMap<>();
   PhraseFactory phraseFactory = new PhraseFactory();
+  private Map<Integer, MiniMusicPlayer> channelsToPlayers = new HashMap<Integer, MiniMusicPlayer>();
   
   MiniMusicPlayer musicPlayer;
 
@@ -50,11 +51,12 @@ support {
     try {
       List<Thread> threads = new ArrayList<Thread>(concurrentChannels.size());
       for (Map.Entry<Integer, String> e : concurrentChannels.entrySet()) {
-        threads.add(
-          new Thread(
-            new RunnablePlayer(e.getKey(), channelsToInstruments.getOrDefault(e.getKey(), 0), e.getValue(), _bpm)
-          )
-        );
+        threads.add(new Thread(
+          new RunnablePlayer(
+            e.getKey(), 
+            channelsToInstruments.getOrDefault(e.getKey(), 0),
+            e.getValue(), _bpm, channelsToPlayers.get(e.getKey())
+            )));
       }
       for (Thread thread : threads) {
         thread.start();
@@ -79,6 +81,14 @@ support {
       System.out.println("(log) " + msg);
     }
   }
+
+  void declareChannel(int channel) {
+    channelsToPlayers.put(channel, new MiniMusicPlayer());
+  }
+
+  void deleteChannel(int channel) {
+    channelsToPlayers.remove(channel);
+  }
 }
 
 (**** Entry ****)
@@ -86,10 +96,12 @@ statement ::= seq^^ | assign^^ ';'^ | play^^ ';'^ | playConcurrent^^ ';'^ | if_s
 (***************)
 
 (**** Directives ****)
-directive ::= setBpm^^ | setChannelInstrument^^ | printAvailableInstruments^^
-setBpm ::= '_SET_BPM'^ integer                              { setBpm(integer1.v); }
-setChannelInstrument ::= '_SET_INSTRUMENT'^ integer integer { channelsToInstruments.put(integer1.v, integer2.v); }
-printAvailableInstruments ::= '_PRINT_INSTRUMENTS'^         { printAllInstruments(); }
+directive ::= setBpm | setChannelInstrument | printAvailableInstruments | declareChannel | deleteChannel
+setBpm ::= '_SET_BPM' integer                               { setBpm(integer1.v); }
+setChannelInstrument ::= '_SET_INSTRUMENT' integer integer  { channelsToInstruments.put(integer1.v, integer2.v); }
+printAvailableInstruments ::= '_PRINT_INSTRUMENTS'          { printAllInstruments(); }
+declareChannel ::= '_DECLARE_CHANNEL' integer               { declareChannel(integer1.v); }
+deleteChannel ::= '_DELETE_CHANNEL' integer                 { deleteChannel(integer1.v); }
 (********************)
 
 (**** Sequencing, statements and expressions ****)

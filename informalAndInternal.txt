@@ -127,7 +127,7 @@ repetition operator and '^' as the modulation operator.
 
 Signatures for the operations above can be found in section B.
 
-Overall, BitSequencer provides 9 DSL-type statements which call corresponding methods in the ValueUserPlugin class:
+Overall, BitSequencer provides 11 DSL-type statements which call corresponding methods in the ValueUserPlugin class:
   
   modulate(_phrase:String _n:String):String calls the backend to return a phrase modulated by _n semitones.
 
@@ -149,14 +149,20 @@ Overall, BitSequencer provides 9 DSL-type statements which call corresponding me
       of concChannel(_channel:int, _phrase:String, _next:concChannel) or concChannel(_channel:int, _phrase:String) to terminate the nested list.
       When the list is processed, playConcurrent calls the backend to play the given channels/phrases concurrently.
 
+  declareChannel(_channel:int) takes an integer channel ID and maps a music player to that channel
+
+  deleteChannel(_channel:int) deletes the music player mapped to _channel
 
 B: Internal syntax constructors and arities
 ===========================================
 
 Constructors for domain-specific types
 --------------------------------------
-InstrumentTrack(_channel_id:__int32, _trackName:__string, _instrument:__string):InstrumentTrack
-Create a new instrument track with id _channel_id, human-readable name _trackName, playing instrument _instrument.
+declareChannel(_channel:__int32):__done
+Instantiate a new MiniMusicPlayer instance and map it to _channel
+
+deleteChannel(_channel:__int32):__done
+Delete the MiniMusicPlayer instance mapped to _channel
 
 Note(_pitch:__string, _length:__int32):Note
 Create a new note which should play pitch _pitch for the equivalenth of _length semiquavers,
@@ -164,12 +170,6 @@ e.g. note("Ab", 4) represents an Ab with crotchet length.
 
 Phrase(_notes:__list, _length:__int32):Phrase
 A phrase is an constructed from an ordered list of notes. Evaluate _length to be the sum of the lengths of notes in the list.
-
-Pattern(__channels:__int32, __phrases:__array):Pattern
-A pattern consists of an array of phrases, with each array index corresponding to the numerical ID
-of an instrument track (the corresponding track will play the phrase). The interpreter will enforce
-that all phrases belonging to a pattern are the same length, otherwise the pattern is illegal.
-
 
 Basic primitives
 ----------------
