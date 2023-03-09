@@ -1,0 +1,12 @@
+_SET_BPM 160;
+_DECLARE_CHANNEL 1;
+_SET_INSTRUMENT 1 128;
+
+allNotes = "[C-1:16, C#-1:16, Db-1:16, D-1:16, D#-1:16, Eb-1:16, E-1:16, F#-1:16, Gb-1:16, G-1:16, G#-1:16, Ab-1:16, A-1:16, A#-1:16, Bb-1:16, B-1:16]";
+
+for (i = 0; i < 2; i = i + 1) do
+  for(j = 0; j < 10; j = j + 1) do
+    play(1, allNotes^(j*12));
+  done
+  _SET_INSTRUMENT 1 117;
+done
