@@ -1,26 +1,14 @@
-if 2 > 1 do
-  x = 5;
-else
-  x = 6;
+j = 5;
+switch(j)
+  case 1:
+    j = 2;
+  esac
+  case 2:
+    j = 3;
+  esac
+  case 3:
+    j = 4;
+  esac
 done
 
-if 2 > 1 do
- y = 2;
-done
-
-
-i = 0;
-while i < 10 do
-  i = i + 1;
-  if i == 5 do
-    x = 1;
-    i = 10;
-  done
-done
-z = 6;
-
-for (i = 0; i < 5; i = i + 1) do
-  i = i + 1;
-  y = y + 1;
-  z = z * 2;
-done
+i = 1;
