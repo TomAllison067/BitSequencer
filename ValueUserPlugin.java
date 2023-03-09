@@ -51,6 +51,7 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
   private void _instantiate() {
     if (musicPlayer == null) {
       musicPlayer = new MiniMusicPlayer();
+      musicPlayer.setBpm(this.bpm);
     }
   }
 
@@ -65,6 +66,9 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
         _instantiate();
         this.bpm = (int) args[1].value();
         musicPlayer.setBpm(this.bpm);
+        for (MiniMusicPlayer player : channelsToPlayers.values()) {
+          player.setBpm(this.bpm);
+        }
         break;
       case PLAY_PHRASE:     // 1
         /**

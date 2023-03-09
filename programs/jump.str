@@ -61,43 +61,64 @@ while(i < 2) do
   i = i + 1;
 done
 
+      
 bassOutro = sustainedLowG ** 2 ++ sustainedLowC ** 3;
 synthOutro = "[.:8dot, C4:8dot, D4:8, E4:8dot, C4:8dot, D4:8]"
   ++ "[E4:8dot, G4:8dot, E4:8, D4:8dot, C4:8dot, D4:8]"
   ++ "[D4:4dot, E4:4dot, C4:4]"
   ++ "[C4:1]" ** 2;
 
-playConcurrent(
-  1: songIntroBass,
-  2: songIntroSynth,
-  3: fourBarRest ** 2 ++ fourBarDrumLoop ** 2,
-  4: songIntroToms
-);
+sequencing = 5;
+while(sequencing != 0) do
+  switch(sequencing)
+    case 1:
+      playConcurrent(
+        1: bassOutro,
+        2: synthOutro^12,
+        3: fourBarDrumLoop,
+        4: "[C4:4, .:4, .:4, .:4]" ++ oneBarRest ** 2 ++ "[.:4, .:4, .:8, G5:8, C5:8, C4:8, C4:4]"
+      );
+      sequencing = 0;
+    esac
+    case 2:
+      playConcurrent(
+        1: bassAccompaniment1st4,
+        2: synthSolo1st4,
+        3: fourBarDrumLoop,
+        4: "[C4:4, .:4, .:4, .:4]" ++ oneBarRest ** 2 ++ "[.:4, .:4, .:8, G5:8, C5:8, C4:8]"
+      );
+      sequencing = 1;
+    esac
+    case 3:
+      playConcurrent(
+        1: (bass8ths ++ "[.:1]" ** 8),
+        2: songMiddleSynth,
+        3: fourBarDrumLoop ++ twoBarDrumLoopDotted ++ fourBarDrumLoop ++ oneBarDrumLoop ** 2,
+        4: "[C3:4]"
+      );
+      sequencing = 2;
+    esac
+    case 4:
+      playConcurrent(
+        1: (bass8ths ++ "[.:1]" ** 8),
+        2: songMiddleSynth,
+        3: fourBarDrumLoop ++ twoBarDrumLoopDotted ++ fourBarDrumLoop ++ oneBarDrumLoop ** 2,
+        4: "[C3:4]"
+      );
+      sequencing = 3;
+    esac
+    case 5: 
+      playConcurrent(
+        1: songIntroBass,
+        2: songIntroSynth,
+        3: fourBarRest ** 2 ++ fourBarDrumLoop ** 2,
+        4: songIntroToms
+      );
+      sequencing = 4;
+    esac
+  done
+done      
 
-playConcurrent(
-  1: (bass8ths ++ "[.:1]" ** 8),
-  2: songMiddleSynth,
-  3: fourBarDrumLoop ++ twoBarDrumLoopDotted ++ fourBarDrumLoop ++ oneBarDrumLoop ** 2,
-  4: "[C3:4]"
-);
 
-playConcurrent(
-  1: (bass8ths ++ "[.:1]" ** 8),
-  2: songMiddleSynth,
-  3: fourBarDrumLoop ++ twoBarDrumLoopDotted ++ fourBarDrumLoop ++ oneBarDrumLoop ** 2,
-  4: "[C3:4]"
-);
 
-playConcurrent(
-  1: bassAccompaniment1st4,
-  2: synthSolo1st4,
-  3: fourBarDrumLoop,
-  4: "[C4:4, .:4, .:4, .:4]" ++ oneBarRest ** 2 ++ "[.:4, .:4, .:8, G5:8, C5:8, C4:8]"
-);
 
-playConcurrent(
-  1: bassOutro,
-  2: synthOutro^12,
-  3: fourBarDrumLoop,
-  4: "[C4:4, .:4, .:4, .:4]" ++ oneBarRest ** 2 ++ "[.:4, .:4, .:8, G5:8, C5:8, C4:8, C4:4]"
-);
