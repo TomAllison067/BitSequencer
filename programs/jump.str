@@ -2,18 +2,47 @@ _SET_BPM 130;
 _SET_INSTRUMENT 1 62;
 _SET_INSTRUMENT 2 81;
 
-bassIntro = "[C2:1]" ** 2 ++ "[C2:2, C2:4, .:8, F2:8]" ++ "[F2:4, .:8, D3:8, D3:4, .:4]";
+bassIntro = "[C2:1]" ** 2 ++ "[C2:2, C2:4, .:8, F2:2]" ++ "[D3:4dot, .:4]";
 bass8ths = ("[C2:8]" ** 8) ** 2 ++ "[C2:8]" ** 7 ++ "[F2:8]" ** 4 ++ "[G2:8]" ** 5;
 
-chordIntro = "[.:4, {G4/B4/D5}:8, .:4, {G4/C5/E5}:8, .:4]" ++ "[{F3/A4/C5}:8, .:8, .:8, {F3/A4/C5}:8, .:8, {G4/B4/D5}:8, .:8, {G4/B4/D5}:4, .:8]"
-  ++ "[{G4/C4/E5}:8, .:8, .:8, {F3/A4/C4}:8, .:8, {C3/F3/A4}:4, {C3/E3/G4}:4, {C3/D3/A4}:4, .:8, .:4]";
+synthChords1 = "[.:4, {G4/B4/D5}:8, .:4, {G4/C5/E5}:8, .:4]"
+  ++ "[{F3/A4/C5}:8, .:8, .:8, {F3/A4/C5}:8, .:8, {G4/B4/D5}:8, .:8, {G4/B4/D5}:4dot, {G4/C5/E5}:8, .:4, {F3/A4/C5}:8, .:8, {C3/F3/A4}:4, {C3/E3/G4}:4, {C3/D3/A4}:2, .:8]";
+
+synthChords2 = "[.:4, {F5/A5/C6}:8, .:4, {F5/A5/C6}:8, .:4, {F5/A5/C6}:8, .:4, {F5/A5/C6}:8, .:4, {C4/E5/G5}:4]"
+  ++ "[.:4, {F3/A4/C4}:8, .:4, {C3/F3/A4}:8, .:8, {C3/F3/A4}:4, {E3/G3}:8, .:8, {C3/D3/G4}:2, .:8]";
 
 
-isDotted = "[C3:4dot, C3:4dot, C3:4]";
+songIntroBass = bassIntro ** 2 ++ bass8ths ** 2;
+songIntroSynth = synthChords1 ** 3 ++ synthChords2;
 
-play(1, isDotted ** 4);
+songMiddleSynth = synthChords1 ++ ("[{A4/C5}:4dot, {G4/B4}:4dot]" ** 2 ++ "[{A4/C5}:4, {G4/B4}:4]");
+
+for (i = 0; i < 3; i = i + 1) do
+  lift = "[E5:4, D5:2dot, .:8]";
+  if (i == 2) do
+    songMiddleSynth = songMiddleSynth ++ "[F4:8, A4:8, C5:8, A4:8, E4:8, G4:8, C4:8]" ++ lift^5;
+  else
+    songMiddleSynth = songMiddleSynth ++ "[F4:8, A4:8, C5:8, A4:8, E4:8, G4:8, C4:8]" ++ lift;
+  done
+done
+
+songMiddleSynth = songMiddleSynth ** 2;
 
 playConcurrent(
-  1: bassIntro ** 2 ++ bass8ths ** 2,
-  2: chordIntro ** 2 ++ chordIntro ** 2
+  1: songIntroBass ++ (bass8ths ++ "[.:1]" ** 8) ** 2,
+  2: songIntroSynth ++ songMiddleSynth
 );
+
+descending3rd16ths = "[D5:16, B5:16, G4:16]";
+descending3rd4th16ths = "[E5:16, C5:16, G4:16]";
+
+synthSolo = "";
+
+i = 0;
+while(i < 2) do
+  synthSolo = synthSolo ++ descending3rd16ths ** 2 ++ descending3rd4th16ths ** 2
+    ++ descending3rd16ths ** 3 ++ descending3rd16ths^-2 ** 2 ++ "[A5:16, C5:16]";
+  i = i + 1;
+done
+
+play(2, synthSolo);

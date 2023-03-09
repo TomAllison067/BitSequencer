@@ -93,10 +93,18 @@ public class PhraseFactory {
    *  concatenates to "[Cb3:2, E4:8, G5:8, D4:8, .:8]"
    */
   public String concatPhraseFromPhraseString(String phrase1, String phrase2) {
-    String phrase1prefix = phrase1.substring(0, phrase1.length() - 1);
+    String phrase1prefix;
+    if (!phrase1.isEmpty()) {
+      phrase1prefix = phrase1.substring(0, phrase1.length() - 1);
+    } else {
+      phrase1prefix = "[";
+    }
     String phrase2suffix = phrase2.substring(1);
     StringBuilder concatenated = new StringBuilder(phrase1prefix);
-    concatenated.append(MEASURE_SEPARATOR);
+    // Stop empty strings being concatenated to with a leading comma
+    if (!phrase1.isEmpty()) {
+      concatenated.append(MEASURE_SEPARATOR);
+    }
     concatenated.append(phrase2suffix);
     return concatenated.toString();
   }
