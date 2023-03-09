@@ -92,7 +92,7 @@ support {
 }
 
 (**** Entry ****)
-statement ::= seq^^ | assign^^ ';'^ | play^^ ';'^ | playConcurrent^^ ';'^ | if_stmt^^ | while_stmt^^ | for_stmt^^ | directive^^ ';'^
+statement ::= seq^^ | assign^^ ';'^ | play^^ ';'^ | playConcurrent^^ ';'^ | if_stmt^^ | while_stmt^^ | for_stmt^^ | switch_stmt^^ | directive^^ ';'^
 (***************)
 
 (**** Directives ****)
@@ -142,6 +142,25 @@ for_stmt ::= 'for'^ '('^ assign ';'^ e0< ';'^ assign< ')'^ 'do'^ statement< 'don
       artEvaluate(for_stmt.e01, e01);
     }
   }
+
+switch_stmt ::= 'switch' '(' e0 ')' { switch_body1.control = e01.v; } switch_body 'done'
+switch_body <control:Integer> ::= 
+    'case' e0< ':' statement< 'esac' 
+    { 
+      artEvaluate(switch_body.e01, e01);
+      if (e01.v.equals(switch_body.control)) {
+        artEvaluate(switch_body.statement1, statement1);
+      } 
+    }
+  | 'case' e0< ':' statement< 'esac' { switch_body1.control = switch_body.control; } switch_body<
+    { 
+      artEvaluate(switch_body.e01, e01);
+      if (e01.v.equals(switch_body.control)) {
+        artEvaluate(switch_body.statement1, statement1);
+      } else {
+        artEvaluate(switch_body.switch_body1, switch_body1);
+      }
+    }
 
 assign ::= identifier '='^ phrase0    { symbolTable.put(identifier1.v, new PhraseBinding(phrase01.v)); log(identifier1.v + " = " + phrase01.v);}
   | identifier '='^ e0                { symbolTable.put(identifier1.v, new PhraseBinding(e01.v)); log(identifier1.v + " = " + e01.v); }
