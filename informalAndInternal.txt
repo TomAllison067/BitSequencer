@@ -48,12 +48,32 @@ Boolean literals are written with the keywords 'True' and 'False'.
 S.4 Selection statements
 ------------------------
 
-BitSequencer provides two selection statements:
+BitSequencer provides three selection statements:
 
-if _pred do _statement else _statement done
-if _pred do _statement done
+  if _pred do _statement else _statement done
+  if _pred do _statement done
 
 where _pred is a predicate as defined in section S.3, and _statement is any statement.
+
+and
+
+  switch (_expression)
+    case _case1:
+      _statement1
+    esac
+    case _case2:
+      _statement2
+    esac
+    case ...
+      ...
+    case _caseN:
+      _statementN
+    esac
+  done
+
+where _expression and _case are numerical expressions to be compared for equality.
+
+If _expression matches a _case, the corresponding _statement will be executed. There is no fall-through behaviour
 
 S.5 Assignments statements
 --------------------------
@@ -241,6 +261,13 @@ Selection, if _P evaluates to true then execute _S1
 
 ifElse(_P:__boolean, _S1, _S2)
 Selection, if _P evaluates to true then execute _S1, else execute _S2
+
+switch(_E1:__int, _E2:__int, _S1)
+Selection, if _E1 equals _E2 then execute _S1
+
+switch(_controlVar:__int, _case1:__int, _S1, _case2:__int, _S2, ..., __caseN:_int, _SN)
+Selection, if _controlVar equals _case then execute _S1, otherwise compare with _case2 and execute _S2 if _controlVar matches _case2
+, otherwise compare _caseN, .etc
 
 while(_P:__boolean, _S1, _S2)
 Iteration, while _P is true execute _S1, then execute _S2
