@@ -417,3 +417,13 @@ playConcurrent(__done), _sig -> __user(8), _sig
 _concChannelList, _sig -> _concChannelListP, _sigP
 ---
 playConcurrent(_concChannelList), _sig -> playConcurrent(_concChannelListP), _sigP
+
+-declareChannel
+_channel |> __int32(_)
+---
+declareChannel(_channel), _sig -> __user(9, _channel), _sig
+
+-deleteChannel
+_channel |> __int32(_)
+---
+deleteChannel(_channel), _sig -> __user(10, _channel), _sig

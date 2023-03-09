@@ -23,6 +23,9 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
   /* Maps midi channels to phrases. Set with `LOAD_CONCURRENT` and cleared after played
    * by `PLAY_CONCURRENT` */
   private Map<Integer, String> concurrentChannels = new HashMap<Integer, String>();
+  
+  /* Maps channels to music players. Entries are declared with DECLARE_CHANNEL, and deleted with DELETE_CHANNEL */
+  private Map<Integer, MiniMusicPlayer> channelsToPlayers = new HashMap<Integer, MiniMusicPlayer>();
 
   enum OpCode {
     SET_BPM,                      // 0
@@ -33,7 +36,9 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
     PRINT_AVAILABLE_INSTRUMENTS,  // 5
     SET_INSTRUMENT,               // 6
     LOAD_CONCURRENT,              // 7
-    PLAY_CONCURRENT;              // 8
+    PLAY_CONCURRENT,              // 8
+    DECLARE_CHANNEL,              // 9
+    DELETE_CHANNEL;               // 10
   }
   
 
@@ -94,14 +99,13 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
         musicPlayer.printAllInstruments();
         break;
       case SET_INSTRUMENT: // 6
-        // Set a given midi channel (between 0-15) to an instrument (0-127)
-        _instantiate();
+        // Set a given bitsequencer channel (between 0-15) to an instrument (0-127)
         int channelIndex = (int) args[1].value();
         int instrument = (int) args[2].value();
         channelsToInstruments.put(channelIndex, instrument);
         break;
       case LOAD_CONCURRENT: // 7
-        /* Argument 1: midi channel, argument 2: phrase */
+        /* Argument 1: bitsequencer channel, argument 2: phrase */
         System.out.println("Loading concurrent channel " + args[1].value().toString() + " with phrase " + args[2].value().toString());
         concurrentChannels.put((Integer) args[1].value(), (String) args[2].value());
         break;
@@ -110,12 +114,13 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
         try {
           List<Thread> threads = new ArrayList<Thread>(concurrentChannels.size());
           for (Map.Entry<Integer, String> e : concurrentChannels.entrySet()) {
-            threads.add(
-              new Thread(
-                new RunnablePlayer(e.getKey(), channelsToInstruments.getOrDefault(e.getKey(), 0), e.getValue(), this.bpm)
-              )
-            );
-          }
+            threads.add(new Thread(
+              new RunnablePlayer(
+                e.getKey(), 
+                channelsToInstruments.getOrDefault(e.getKey(), 0),
+                e.getValue(), this.bpm, channelsToPlayers.get(e.getKey())
+                )));
+            }
           for (Thread thread : threads) {
             thread.start();
           }
@@ -126,6 +131,14 @@ public class ValueUserPlugin implements ValueUserPluginInterface {
           /* ignore  */
         }
         concurrentChannels.clear();
+        break;
+      case DECLARE_CHANNEL: // 9
+        /* Argument 1: bitsequencer channel */
+        channelsToPlayers.put((Integer) args[1].value(), new MiniMusicPlayer());
+        break;
+      case DELETE_CHANNEL: // 10
+        /* Argument 1: bitsequencer channel */  
+        channelsToPlayers.remove((Integer) args[1].value());
         break;
       default:
         return new __bottom();

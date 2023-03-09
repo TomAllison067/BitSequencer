@@ -3,10 +3,12 @@ statement ::= seq^^ | assign^^ ';'^ | play^^ ';'^ | playConcurrent^^ ';'^ | if^^
 (***************)
 
 (**** Directives ****)
-directive ::= setBpm^^ | setChannelInstrument^^ | printAvailableInstruments^^
+directive ::= setBpm^^ | setChannelInstrument^^ | printAvailableInstruments^^ | declareChannel^^ | deleteChannel^^
 setBpm ::= '_SET_BPM'^ integer
 setChannelInstrument ::= '_SET_INSTRUMENT'^ integer integer
 printAvailableInstruments ::= '_PRINT_INSTRUMENTS'^
+declareChannel ::= '_DECLARE_CHANNEL'^ integer
+deleteChannel ::= '_DELETE_CHANNEL'^ integer
 (********************)
 
 (**** Sequencing, statements and expressions ****)
