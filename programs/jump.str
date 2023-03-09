@@ -33,16 +33,36 @@ playConcurrent(
   2: songIntroSynth ++ songMiddleSynth
 );
 
+synthSolo = "";
+bassAccompaniment = "";
+
+sustainedLowC = "[{C2/C3}:1]";
+sustainedLowF = sustainedLowC^-7;
+sustainedLowG = sustainedLowF^2;
+sustainedLowBb = sustainedLowF^5;
+sustainedLowA = sustainedLowBb^-1;
+sustainedLowAb = sustainedLowA^-1;
+
 descending3rd16ths = "[D5:16, B5:16, G4:16]";
 descending3rd4th16ths = "[E5:16, C5:16, G4:16]";
-
-synthSolo = "";
+risingMinor3rd16ths = "[A5:16, C5:16]";
 
 i = 0;
 while(i < 2) do
   synthSolo = synthSolo ++ descending3rd16ths ** 2 ++ descending3rd4th16ths ** 2
-    ++ descending3rd16ths ** 3 ++ descending3rd16ths^-2 ** 2 ++ "[A5:16, C5:16]";
+    ++ descending3rd16ths ** 3 ++ descending3rd16ths^-2 ** 3 ++ risingMinor3rd16ths;
+  bassAccompaniment = bassAccompaniment ++ sustainedLowC ** 2;
   i = i + 1;
 done
 
-play(2, synthSolo);
+playConcurrent(
+  1: bassAccompaniment,
+  2: synthSolo);
+
+playConcurrent(
+  1: sustainedLowF ** 2 ++ sustainedLowG ** 2 ++ sustainedLowBb ** 2 ++ sustainedLowA ** 2 ++ sustainedLowAb ** 2
+);
+
+playConcurrent(
+  1: sustainedLowG ** 2 ++ sustainedLowC ** 3
+);
