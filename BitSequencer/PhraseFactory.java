@@ -14,9 +14,18 @@ public class PhraseFactory {
     List<Measure> phrase = new ArrayList<Measure>();
     for (String note : phraseStringArray) {
       String[] components = note.split(":");
-      int length = Integer.parseInt(components[1]);
+
+      boolean dotted;
+      int length;
+      if (components[1].endsWith("dot")) {
+        dotted = true;
+        length = Integer.parseInt(components[1].substring(0, components[1].indexOf("dot")));
+      } else {
+        dotted = false;
+        length = Integer.parseInt(components[1]);
+      }
       phrase.add(new Measure(
-        parseComponentToNote(components[0]), length));
+        parseComponentToNote(components[0]), length, dotted));
     }
     return phrase;
   }

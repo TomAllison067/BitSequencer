@@ -9,11 +9,13 @@ import java.util.List;
 public class Measure {
   private List<Note> notes;
   int subdivision;
+  boolean dotted;
 
-  public Measure(List<Note> notes, int subdivision) {
+  public Measure(List<Note> notes, int subdivision, boolean dotted) {
     this.notes = new ArrayList<>();
     this.notes = notes;
     this.subdivision = subdivision;
+    this.dotted = dotted;
   }
 
   public List<Note> getNotes() {
@@ -25,11 +27,15 @@ public class Measure {
     for (Note note : this.notes) {
       modulatedNotes.add(note.modulate(n));
     }
-    return new Measure(modulatedNotes, this.subdivision);
+    return new Measure(modulatedNotes, this.subdivision, this.dotted);
   }
 
   public int getSubdivision() {
     return this.subdivision;
+  }
+
+  public boolean getDotted() {
+    return this.dotted;
   }
 
   public boolean isChord() {

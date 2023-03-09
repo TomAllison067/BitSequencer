@@ -1,0 +1,17 @@
+global feedback
+
+Informal spec:
+* Return type constraints (where we actually know them)
+
+Esos:
+* can cast with `__cast(1.0, myvar)`
+* Flow control -> add switch statement (take cases, build them into a list, if case is true rewrite switch statement to body of case, otherwise rewrite to switch statement, otherwise default)
+
+* Create handles in java, and return that from object-creating constructors (maybe not for music but explain in report), i.e. map + bimap (although have for channels and bpm?)
+
+Plugin:
+* DEFINITELY add dynamics
+* dotted notes
+ shepard tone? maybe not
+
+ jar files + scripts were good
