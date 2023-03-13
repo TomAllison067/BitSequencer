@@ -79,7 +79,6 @@ while(sequencing != 0) do
         4: "[C4:4, .:4, .:4, .:4]" ++ oneBarRest ** 2 ++ "[.:4, .:4, .:8, G5:8, C5:8, C4:8, C4:4]"
       );
       sequencing = 0;
-    esac
     case 2:
       playConcurrent(
         1: bassAccompaniment1st4,
@@ -88,7 +87,6 @@ while(sequencing != 0) do
         4: "[C4:4, .:4, .:4, .:4]" ++ oneBarRest ** 2 ++ "[.:4, .:4, .:8, G5:8, C5:8, C4:8]"
       );
       sequencing = 1;
-    esac
     case 3:
       playConcurrent(
         1: (bass8ths ++ "[.:1]" ** 8),
@@ -97,7 +95,6 @@ while(sequencing != 0) do
         4: "[C3:4]"
       );
       sequencing = 2;
-    esac
     case 4: 
       playConcurrent(
         1: songIntroBass,
@@ -106,7 +103,6 @@ while(sequencing != 0) do
         4: songIntroToms
       );
       sequencing = 3;
-    esac
   done
 done      
 
