@@ -60,15 +60,12 @@ and
   switch (_expression)
     case _case1:
       _statement1
-    esac
     case _case2:
       _statement2
-    esac
     case ...
       ...
     case _caseN:
       _statementN
-    esac
   done
 
 where _expression and _case are numerical expressions to be compared for equality.
