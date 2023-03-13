@@ -70,7 +70,7 @@ and
 
 where _expression and _case are numerical expressions to be compared for equality.
 
-If _expression matches a _case, the corresponding _statement will be executed. There is no fall-through behaviour
+If _expression matches a _case, the corresponding _statement will be executed. There is no fall-through behaviour.
 
 S.5 Assignments statements
 --------------------------
