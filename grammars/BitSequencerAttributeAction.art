@@ -89,9 +89,19 @@ support {
   void deleteChannel(int channel) {
     channelsToPlayers.remove(channel);
   }
+
+  void logSymbolTableAtEnd() {
+    if (Boolean.getBoolean("logging")) {
+      System.out.println("(log) Printing symbol table");
+      for (Map.Entry<String, BindingInterface> e : symbolTable.entrySet()) {
+        System.out.println("\t" + e.getKey() + ": " + e.getValue().getValue());
+      }
+    }
+  }
 }
 
 (**** Entry ****)
+program ::= statement { logSymbolTableAtEnd(); }
 statement ::= seq^^ | assign^^ ';'^ | play^^ ';'^ | playConcurrent^^ ';'^ | if_stmt^^ | while_stmt^^ | for_stmt^^ | switch_stmt^^ | directive^^ ';'^
 (***************)
 
@@ -145,14 +155,14 @@ for_stmt ::= 'for'^ '('^ assign ';'^ e0< ';'^ assign< ')'^ 'do'^ statement< 'don
 
 switch_stmt ::= 'switch' '(' e0 ')' { switch_body1.control = e01.v; } switch_body 'done'
 switch_body <control:Integer> ::= 
-    'case' e0< ':' statement< 'esac' 
+    'case' e0< ':' statement< 
     { 
       artEvaluate(switch_body.e01, e01);
       if (e01.v.equals(switch_body.control)) {
         artEvaluate(switch_body.statement1, statement1);
       } 
     }
-  | 'case' e0< ':' statement< 'esac' { switch_body1.control = switch_body.control; } switch_body<
+  | 'case' e0< ':' statement< { switch_body1.control = switch_body.control; } switch_body<
     { 
       artEvaluate(switch_body.e01, e01);
       if (e01.v.equals(switch_body.control)) {

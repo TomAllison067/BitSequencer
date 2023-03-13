@@ -2,20 +2,31 @@ j = 5;
 switch(j)
   case 1:
     j = 2;
-  esac
   case 2:
     j = 3;
-  esac
   case 3:
     j = 4;
-  esac
 done
 
 q = 0;
 switch(q)
   case 0:
     q = 2;
-  esac
+done
+
+m = 0;
+switch(m)
+  case 0:
+    n = 8;
+    switch(n)
+      case 9:
+        n = 10;
+      case 8:
+        n = 11;
+        m = 1;
+      done
+  case 1:
+    m = 3;
 done
 
 i = 1;
