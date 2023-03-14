@@ -102,7 +102,7 @@ support {
 
 (**** Entry ****)
 program ::= statement { logSymbolTableAtEnd(); }
-statement ::= seq^^ | assign^^ ';'^ | play^^ ';'^ | playConcurrent^^ ';'^ | if_stmt^^ | while_stmt^^ | for_stmt^^ | switch_stmt^^ | directive^^ ';'^
+statement ::= seq^^ | assign_stmt^^ ';'^ | play^^ ';'^ | playConcurrent^^ ';'^ | if_stmt^^ | while_stmt^^ | for_stmt^^ | switch_stmt^^ | directive^^ ';'^
 (***************)
 
 (**** Directives ****)
@@ -154,9 +154,9 @@ for_stmt ::= 'for'^ '('^ for_init< ';'^ for_test< ';'^ for_increment< ')'^ 'do'^
     }
   }
 
-for_init ::= assign | e0
+for_init ::= assign_stmt | e0
 for_test<v:int> ::= e0 { for_test.v = e01.v; }
-for_increment ::= assign
+for_increment ::= assign_stmt
 
 switch_stmt ::= 'switch' '(' e0 ')' { switch_body1.control = e01.v; } switch_body 'done'
 switch_body <control:Integer> ::= 
@@ -177,7 +177,7 @@ switch_body <control:Integer> ::=
       }
     }
 
-assign ::= identifier '='^ phrase0    { symbolTable.put(identifier1.v, new PhraseBinding(phrase01.v)); log(identifier1.v + " = " + phrase01.v);}
+assign_stmt ::= identifier '='^ phrase0    { symbolTable.put(identifier1.v, new PhraseBinding(phrase01.v)); log(identifier1.v + " = " + phrase01.v);}
   | identifier '='^ e0                { symbolTable.put(identifier1.v, new PhraseBinding(e01.v)); log(identifier1.v + " = " + e01.v); }
 
 play ::= 
