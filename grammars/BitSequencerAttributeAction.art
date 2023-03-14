@@ -143,15 +143,20 @@ while_stmt ::=
     }
   }
 
-for_stmt ::= 'for'^ '('^ assign ';'^ e0< ';'^ assign< ')'^ 'do'^ statement< 'done'^
+for_stmt ::= 'for'^ '('^ for_init< ';'^ for_test< ';'^ for_increment< ')'^ 'do'^ statement< 'done'^
   { 
-    artEvaluate(for_stmt.e01, e01);
-    while(e01.v != 0) {
-      artEvaluate(for_stmt.statement1, statement1);
-      artEvaluate(for_stmt.assign2, assign2);
-      artEvaluate(for_stmt.e01, e01);
+    artEvaluate(for_stmt.for_init1, for_init1);               // Initialise
+    artEvaluate(for_stmt.for_test1, for_test1);               // Test
+    while(for_test1.v != 0) {
+      artEvaluate(for_stmt.statement1, statement1);           // Body
+      artEvaluate(for_stmt.for_increment1, for_increment1);   // Increment (assignment)
+      artEvaluate(for_stmt.for_test1, for_test1);              // Test
     }
   }
+
+for_init ::= assign | e0
+for_test<v:int> ::= e0 { for_test.v = e01.v; }
+for_increment ::= assign
 
 switch_stmt ::= 'switch' '(' e0 ')' { switch_body1.control = e01.v; } switch_body 'done'
 switch_body <control:Integer> ::= 
