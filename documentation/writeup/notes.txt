@@ -2,6 +2,7 @@ Questions to ask adrian:
 * Semantics of for loop:
   * attribute/action: initialiser is an expression or assignment,
     but esos just a statement..
+    Difference in semantics: AA is "better" in that esos would allow things like while loops as iniitalisers??
   * Would correct thing be to write different types of rules for different
     statements? Very hard in esos, write about this...
 * Can switch statement be briefer in esos?

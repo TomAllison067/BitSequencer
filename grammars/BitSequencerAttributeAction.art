@@ -150,7 +150,7 @@ for_stmt ::= 'for'^ '('^ for_init< ';'^ for_test< ';'^ for_increment< ')'^ 'do'^
     while(for_test1.v != 0) {
       artEvaluate(for_stmt.statement1, statement1);           // Body
       artEvaluate(for_stmt.for_increment1, for_increment1);   // Increment (assignment)
-      artEvaluate(for_stmt.for_test1, for_test1);              // Test
+      artEvaluate(for_stmt.for_test1, for_test1);             // Test
     }
   }
 
@@ -160,14 +160,16 @@ for_increment ::= assign_stmt
 
 switch_stmt ::= 'switch' '(' e0 ')' { switch_body1.control = e01.v; } switch_body 'done'
 switch_body <control:Integer> ::= 
-    'case' e0< ':' statement< 
-    { 
+    // Single case / end of switch cases
+    'case' e0< ':' statement<   
+    {                                           
       artEvaluate(switch_body.e01, e01);
       if (e01.v.equals(switch_body.control)) {
         artEvaluate(switch_body.statement1, statement1);
       } 
     }
-  | 'case' e0< ':' statement< { switch_body1.control = switch_body.control; } switch_body<
+  | // Multiple cases
+    'case' e0< ':' statement< { switch_body1.control = switch_body.control; } switch_body< 
     { 
       artEvaluate(switch_body.e01, e01);
       if (e01.v.equals(switch_body.control)) {
