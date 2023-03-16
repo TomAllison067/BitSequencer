@@ -5,7 +5,7 @@ mkdir BitSequencerSubmission
 cp -aR package BitSequencerSubmission
 cp ART/art.jar build/BitSequencer.jar BitSequencerSubmission/package
 
-cp 00README.txt eSOSRules.art informalAndInternal.txt ValueUserPlugin.java BitSequencerSubmission/
+cp 00README.md eSOSRules.art informalAndInternal.txt ValueUserPlugin.java BitSequencerSubmission/
 mkdir -p BitSequencerSubmission/scripts
 cp -aR scripts/submission\_scripts/* BitSequencerSubmission/scripts
 
@@ -21,3 +21,6 @@ cp eSOSRulesONLY.art BitSequencerSubmission/
 
 # Copy programs
 cp -aR programs BitSequencerSubmission/
+
+cp ./documentation/instrumentlist.txt BitSequencerSubmission/
+cp ./documentation/BitSequencerWriteup.pdf BitSequencerSubmission/

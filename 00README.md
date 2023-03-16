@@ -2,7 +2,7 @@ Welcome to BeatSequencer!
 
 The backend classes, including ValueUserPlugin.class, are all compiled into BitSequencer.jar.
 
-== Introduction ==
+# Introduction ==
 BeatSequencer is a music DSL that allows users to program both monophonic and polyphonic patterns and play them
 back using the Java MIDI subsystem.
 
@@ -17,12 +17,15 @@ The first part of a single note, before the colon, is the MIDI note name. The se
 Chords are written by enclosing notes delimited by a `/` symbol inside curly braces, and the subdivision of the chord is added with a colon and number after 
 the last curly brace. So, "{G4/B4/D4}:4" plays a crotchet-length (quarter note) chord consisting of notes G4, B4 and D4 (a G major chord).
 
-== How to run the eSOS rules ==
-From the root directory of the project, run `art.bat eSOSRules.art`. 
-directives.
+The best program to look at is "jump.str" to see every feature in action.
 
-All the !try directives should work as expected, but they've all been commented out aside from the last three (which are the most interesting):
-* One plays an excerpt of Sweet Dreams by Eurythmics with three instruments by playing three patterns concurrently.
-* One plays a rhythmic scale, repeating notes starting with breves, semibreves, and dividing into eventually into 64th notes. This is to test that note durations
-  have been properly implemented.
-* One plays all of the MIDI notes available to BeatSequencer, ranging from 21 (A0) to 127 (G9), repeating notes where sharps and flats overlap.
+# HOW TO RUN ==
+I've tried to make everything easy to use with a few scripts and by packaging the backend and ART together with separate parsers for the eSOS and attribute grammars.
+
+You *should* just be able to do one of the following:
+* `$ ./scripts/unix/aa.sh <program>` (to use the attribute action parser) or `$ ./scripts/unix/esos.sh <program>` (to use the eSOS parser) on Unix
+  * e.g. `$ ./scripts/unix/aa.sh programs/jump.str`
+* And likewise for Windows `$ ./scripts/windows/aa.bat programs/jump.str` .etc
+
+For the attribute action scripts, you can stick `-Dlogging=true` on the end of the call to enable some simple internal logging that prints the symbol table out
+at the end of the parse e.g. to check variable values (where eSOS of course prints the symbol table out at the end anyway), but this isn't very interesting.
