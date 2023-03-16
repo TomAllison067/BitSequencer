@@ -23,4 +23,4 @@ cp eSOSRulesONLY.art BitSequencerSubmission/
 cp -aR programs BitSequencerSubmission/
 
 cp ./documentation/instrumentlist.txt BitSequencerSubmission/
-cp ./documentation/BitSequencerWriteup.pdf BitSequencerSubmission/
+cp ./documentation/writeup/BitSequencerWriteup.pdf BitSequencerSubmission/
