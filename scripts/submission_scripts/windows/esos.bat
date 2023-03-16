@@ -8,7 +8,7 @@ mkdir terms
 
 move term.txt terms\
 
-echo "$(type eSOSRulesONLY.art) !try $(type terms\term.txt), __map" > terms\term.txt
+powershell -Command "(Get-Content eSOSRulesONLY.art) + ' !try ' + (Get-Content terms/term.txt) + ', __map' | Set-Content terms/term.txt"
 
 java -cp ".;./package/art.jar;./package/BitSequencer.jar;./package/esos_parser" uk.ac.rhul.cs.csle.art.ART terms\term.txt
 
