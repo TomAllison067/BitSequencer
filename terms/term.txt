@@ -1,0 +1,473 @@
+// == ASSIGNMENT ==
+-assignStr
+_str |> __string(_)
+---
+assign(_ID, _str), _sig -> __done, __put(_sig, _ID, _str)
+
+-assignInt
+_n |> __int32(_)   
+---
+assign(_ID, _n), _sig -> __done, __put(_sig, _ID, _n)
+
+-assignBool
+_b |> __bool(_)
+---
+assign(_ID, _b), _sig -> __done, __put(_sig, _ID, _b)
+
+-assignIntResolve
+_E, _sig -> _I, _sigP 
+---
+assign(_X,_E), _sig -> assign(_X, _I), _sigP
+
+-assignStrResolve
+_str, _sig -> _strP, _sigP
+---
+assign(_ID, _str), _sig -> assign(_ID, _strP), _sigP
+
+-assignBoolResolve
+_bool, _sig -> _boolP, _sigP
+---
+assign(_ID, _bool), _sig -> assign(_ID, _boolP), _sigP
+
+// Returns __string
+-modulate
+_phrase |> __string(_) _n |> __int32(_)
+---
+modulate(_phrase, _n), _sig -> __user(2, _phrase, _n), _sig
+
+-modulateResolveRight
+_phrase |> __string(_) _E1, _sig -> _I1, _sigP
+---
+modulate(_phrase, _E1), _sig -> modulate(_phrase, _I1), _sigP
+
+-modulateResolveLeft
+_phrase, _sig -> _phraseP, _sigP
+---
+modulate(_phrase, _E1), _sig -> modulate(_phraseP, _E1), _sigP
+
+// == SEQUENCING ==
+-sequenceDone
+---
+seq(__done, _C), _sig -> _C, _sig
+
+-sequence 
+_C1, _sig -> _C1P, _sigP
+---
+seq(_C1, _C2), _sig -> seq(_C1P, _C2), _sigP
+
+// == ARITHMETIC ==
+-add
+_n1 |> __int32(_) _n2 |> __int32(_)
+---
+add(_n1, _n2), _sig -> __add(_n1, _n2), _sig
+
+-addRight
+_n |> __int32(_) _E2, _sig -> _I2, _sigP
+---
+add(_n, _E2), _sig -> add(_n, _I2), _sigP
+
+-addLeft
+_E1, _sig -> _I1, _sigP
+---
+add(_E1, _E2), _sig -> add(_I1, _E2), _sigP
+
+-sub
+_n1 |> __int32(_) _n2 |> __int32(_)
+---
+sub(_n1, _n2),_sig ->  __sub(_n1, _n2),_sig
+
+-subRight
+_n |> __int32(_) _E2,_sig -> _I2,_sigP   
+---
+sub(_n, _E2),_sig -> sub(_n, _I2), _sigP
+
+-subLeft
+_E1,_sig -> _I1,_sigP
+---
+sub(_E1, _E2),_sig -> sub(_I1, _E2), _sigP
+
+-negate
+_n |> __int32(_)
+---
+negate(_n), _sig -> __neg(_n), _sig
+
+-negateResolve
+_E1, _sig -> _I1, _sigP
+---
+negate(_E1), _sig -> negate(_I1), _sigP
+
+-not
+_n |> __int32(_)
+---
+not(_n), _sig -> __not(_n), _sig
+
+-notResolve
+_E1, _sig -> _I1, _sigP
+---
+not(_E1), _sig -> not(_I1), _sigP
+
+-mul
+_n1 |> __int32(_) _n2 |> __int32(_)
+---
+mul(_n1, _n2), _sig -> __mul(_n1, _n2), _sig
+
+-mulRight
+_n |> __int32(_) _E2, _sig -> _I2, _sigP
+---
+mul(_n, _E2), _sig -> mul(_n, _I2), _sigP
+
+-mulLeft
+_E1, _sig -> _I1, _sigP
+---
+mul(_E1, _E2), _sig -> mul(_I1, _E2), _sigP
+
+-div
+_n1 |> __int32(_) _n2 |> __int32(_)
+---
+div(_n1, _n2), _sig -> __div(_n1, _n2), _sig
+
+-divRight
+_n |> __int32(_) _E2, _sig -> _I2, _sigP
+---
+div(_n, _E2), _sig -> div(_n, _I2), _sigP
+
+-divLeft
+_E1, _sig -> _I1, _sigP
+---
+div(_E1, _E2), _sig -> div(_I1, _E2), _sigP
+
+-exp
+_n1 |> __int32(_) _n2 |> __int32(_)
+---
+exp(_n1, _n2), _sig -> __exp(_n1, _n2), _sig
+
+-expRight
+_n |> __int32(_) _E2, _sig -> _I2, _sigP
+---
+exp(_n, _E2), _sig -> exp(_n, _I2), _sigP
+
+-expLeft
+_E1, _sig -> _I1, _sigP
+---
+exp(_E1, _E2), _sig -> exp(_I1, _E2), _sigP
+
+// == RELATIONAL ==
+-gt
+_n1 |> __int32(_) _n2 |> __int32(_)
+---
+gt(_n1, _n2),_sig ->  __gt(_n1, _n2),_sig 
+
+-gtRight
+_n |> __int32(_) _E2, _sig -> _I2,_sigP 
+---
+gt(_n, _E2),_sig -> gt(_n, _I2), _sigP
+
+-gtLeft
+_E1, _sig -> _I1, _sigP 
+---
+gt(_E1, _E2),_sig -> gt(_I1, _E2), _sigP
+
+-ge
+_n1 |> __int32(_) _n2 |> __int32(_)
+---
+ge(_n1, _n2),_sig ->  __ge(_n1, _n2),_sig 
+
+-geRight
+_n |> __int32(_) _E2, _sig -> _I2,_sigP 
+---
+ge(_n, _E2),_sig -> ge(_n, _I2), _sigP
+
+-geLeft
+_E1, _sig -> _I1, _sigP 
+---
+ge(_E1, _E2),_sig -> ge(_I1, _E2), _sigP
+
+-lt
+_n1 |> __int32(_) _n2 |> __int32(_)
+---
+lt(_n1, _n2), _sig -> __lt(_n1, _n2), _sig
+
+-ltRight
+_n |> __int32(_) _E2, _sig -> _I2, _sigP
+---
+lt(_n, _E2), _sig -> lt(_n, _I2), _sigP
+
+-ltLeft
+_E1, _sig -> _I1, _sigP
+---
+lt(_E1, _E2), _sig -> lt(_I1, _E2), _sigP
+
+-le
+_n1 |> __int32(_) _n2 |> __int32(_)
+---
+le(_n1, _n2), _sig -> __le(_n1, _n2), _sig
+
+-leRight
+_n |> __int32(_) _E2, _sig -> _I2, _sigP
+---
+le(_n, _E2), _sig -> le(_n, _I2), _sigP
+
+-leLeft
+_E1, _sig -> _I1, _sigP
+---
+le(_E1, _E2), _sig -> le(_I1, _E2), _sigP
+
+-ne
+_n1 |> __int32(_) _n2 |> __int32(_)
+---
+ne(_n1, _n2),_sig ->  __ne(_n1, _n2),_sig
+
+-neRight
+_n |> __int32(_)  _E2, _sig -> _I2,_sigP 
+---
+ne(_n, _E2),_sig -> ne(_n, _I2), _sigP
+
+-neLeft
+_E1, _sig -> _I1, _sigP 
+---
+ne(_E1, _E2),_sig -> ne(_I1, _E2), _sigP
+
+-eq
+_n1 |> __int32(_) _n2 |> __int32(_)
+---
+eq(_n1, _n2),_sig ->  __eq(_n1, _n2),_sig
+
+-eqRight
+_n |> __int32(_)  _E2, _sig -> _I2,_sigP 
+---
+eq(_n, _E2),_sig -> eq(_n, _I2), _sigP
+
+-eqLeft
+_E1, _sig -> _I1, _sigP 
+---
+eq(_E1, _E2),_sig -> eq(_I1, _E2), _sigP
+
+-and
+_n1 |> __bool(_) _n2 |> __bool(_)
+---
+and(_n1, _n2), _sig -> __and(_n1, _n2), _sig
+
+-andRight
+_n |> __bool(_) _E2, _sig -> _I2, _sigP
+---
+and(_n, _E2), _sig -> and(_n, _I2), _sigP
+
+-andLeft
+_E1, _sig -> _I1, _sigP
+---
+and(_E1, _E2), _sig -> and(_I1, _E2), _sigP
+
+-or
+_n1 |> __bool(_) _n2 |> __bool(_)
+---
+or(_n1, _n2), _sig -> __or(_n1, _n2), _sig
+
+-orRight
+_n |> __bool(_) _E2, _sig -> _I2, _sigP
+---
+or(_n, _E2), _sig -> or(_n, _I2), _sigP
+
+-orLeft
+_E1, _sig -> _I1, _sigP
+---
+or(_E1, _E2), _sig -> or(_I1, _E2), _sigP
+
+// == CONTROL FLOW ==
+
+-ifTrue
+---
+if(True, _C1), _sig -> _C1, _sig
+
+-ifFalse
+---
+if(False, _C1), _sig -> __done, _sig
+
+-ifResolve
+_E, _sig -> _B, _sigP
+---
+if(_E, _C1), _sig -> if(_B, _C1), _sigP
+
+-ifElseTrue 
+---
+if(True, _C1, _C2), _sig -> _C1, _sig
+
+-ifElseFalse 
+---
+if(False, _C1, _C2), _sig -> _C2, _sig
+
+-ifElseResolve
+_E, _sig -> _B, _sigP
+---
+if(_E,_C1,_C2),_sig -> if(_B, _C1, _C2), _sigP
+
+-while
+---
+while(_E, _C),_sig -> if(_E, seq(_C, while(_E,_C)), __done), _sig
+
+-forBody
+---
+forBody(_boolCondition, _body, _increment), _sig -> if(_boolCondition, seq(_body, seq(_increment, seq(forBody(_boolCondition, _body, _increment), __done)))), _sig
+
+-forLoop
+---
+for(_init, _boolCondition, _incr, _body), _sig -> seq(_init, forBody(_boolCondition, _body, _incr)), _sig
+
+-deref
+---
+deref(_R), _sig -> __get(_sig, _R), _sig
+
+-play
+_channel |> __int32(_) _phrase |> __string(_)
+---
+play(_channel, _phrase), _sig -> __user(1, _channel, _phrase), _sig
+
+-playResolve
+_phrase, _sig -> _phraseP, _sigP
+---
+play(_channel, _phrase), _sig -> play(_channel, _phraseP), _sigP
+
+-setBpm
+_n |> __int32(_)
+---
+setBpm(_n), _sig -> __user(0, _n), _sig
+
+-setBpmResolve
+_E1 -> _I1
+---
+setBpm(_E1), _sig -> setBpm(_I1), _sig
+
+-concat
+_phrase1 |> __string(_) _phrase2 |> __string(_)
+---
+concat(_phrase1, _phrase2), _sig -> __user(3, _phrase1, _phrase2), _sig
+
+-concatResolveRight
+_phrase1 |> __string(_) _phrase2, _sig -> _phrase2P, _sigP
+---
+concat(_phrase1, _phrase2), _sig -> concat(_phrase1, _phrase2P), _sigP
+
+-concatResolveLeft
+_phrase1, _sig -> _phrase1P, _sigP
+---
+concat(_phrase1, _phrase2), _sig -> concat(_phrase1P, _phrase2), _sigP
+
+-repeat
+_phrase |> __string(_) _n |> __int32(_)
+---
+repeat(_phrase, _n), _sig -> __user(4, _phrase, _n), _sig
+
+-repeatResolveRight
+_phrase |> __string(_) _n, _sig -> _nP, _sigP
+---
+repeat(_phrase, _n), _sig -> repeat(_phrase, _nP), _sigP
+
+-repeatResolveLeft
+_phrase, _sig -> _phraseP, _sigP
+---
+repeat(_phrase, _n), _sig -> repeat(_phraseP, _n), _sigP
+
+-printAvailableInstruments
+---
+printAvailableInstruments(), _sig -> __user(5), _sig
+
+// No resolving ints for this one - just set a given channel to an instrument
+-setChannelInstrument
+_channel |> __int32(_) _instrument |> __int32(_)
+---
+setChannelInstrument(_channel, _instrument), _sig -> __user(6, _channel, _instrument), _sig
+
+// Play patterns simultaneously (done with multi-threading under the hood)
+// Channels are loaded into a map in the backend rather than a built in map, because this allows us to clear the map after each call.
+
+// Leaf node: put the channel and phrase into the internal map
+-playConcurrentChannelsLeafNode
+_channel |> __int32(_) _phrase |> __string(_) 
+---
+concChannel(_channel, _phrase), _sig -> __user(7, _channel, _phrase), _sig
+
+// Resolve the phrase of a leaf node
+-playConcurrentChannelsLeafNodeResolvePhrase
+_channel |> __int32(_) _phrase, _sig -> _phraseP, _sigP
+---
+concChannel(_channel, _phrase), _sig -> concChannel(_channel, _phraseP), _sigP
+
+// Inner node - may have children
+-playConcurrentChannelsInnerNode
+_channel |> __int32(_) _phrase |> __string(_) _next |> __done
+---
+concChannel(_channel, _phrase, _next), _sig -> concChannel(_channel, _phrase), _sig
+
+// Inner node - resolve `_next` (another node)
+-playConcurrentChannelsInnerNodeResolveNext
+_channel |> __int32(_) _phrase |> __string(_) _next, _sig -> _nextP, _sigP
+---
+concChannel(_channel, _phrase, _next), _sig -> concChannel(_channel, _phrase, _nextP), _sigP
+
+// Inner node - resolve the phrase to a string
+-playConcurrentChannelsInnerNodeResolvePhrase
+_phrase, _sig -> _phraseP, _sigP
+---
+concChannel(_channel, _phrase, _next), _sig -> concChannel(_channel, _phraseP, _next), _sigP
+
+-playConcurrentChannelsDone
+---
+playConcurrent(__done), _sig -> __user(8), _sig
+
+-playConcurrentChannels
+_concChannelList, _sig -> _concChannelListP, _sigP
+---
+playConcurrent(_concChannelList), _sig -> playConcurrent(_concChannelListP), _sigP
+
+-declareChannel
+_channel |> __int32(_)
+---
+declareChannel(_channel), _sig -> __user(9, _channel), _sig
+
+-deleteChannel
+_channel |> __int32(_)
+---
+deleteChannel(_channel), _sig -> __user(10, _channel), _sig
+
+
+-switchBodyLeafNode
+---
+switchBody(_e2, _statement), _sig -> _e2, _statement, __done, _sig
+
+-switchBodyNode
+---
+switchBody(_e2, _statement, _switchBody), _sig -> _e2, _statement, _switchBody, _sig
+
+-switchSingleCaseFalse
+_e1 |> __int32(_) _e2 |> __int32(_) __eq(_e1, _e2) |> False
+---
+switch(_e1, switchBody(_e2, _statement)), _sig -> __done, _sig
+
+-switchSingleCaseTrue
+_e1 |> __int32(_) _e2 |> __int32(_) __eq(_e1, _e2) |> True
+---
+switch(_e1, switchBody(_e2, _statement)), _sig -> seq(_statement, __done), _sig
+
+-switchSingleCaseResolveControl
+_e1, _sig -> _e1P, _sigP
+---
+switch(_e1, switchBody(_e2, _statement)), _sig -> switch(_e1P, switchBody(_e2, _statement)), _sigP
+
+-switchMultipleCasesTrue
+_e1 |> __int32(_) _e2 |> __int32(_) __eq(_e1, _e2) |> True
+---
+switch(_e1, switchBody(_e2, _statement, _switchBody)), _sig -> seq(_statement, __done), _sig
+
+-switchMultipleCasesAtEndOfListAssumeFalse
+_switchBody |> __done
+---
+switch(_e1, switchBody(_e2, _statement, _switchBody)), _sig -> __done, _sig
+
+-switchMultipleCasesFalseMoreToGo
+_e1 |> __int32(_) _e2 |> __int32(_) __eq(_e1, _e2) |> False _switchBody, _sig -> _e2P, _statementP, _switchBodyP, _sigP
+---
+switch(_e1, switchBody(_e2, _statement, _switchBody)), _sig -> switch(_e1, switchBody(_e2P, _statementP, _switchBodyP)), _sigP
+
+-switchMultipleCasesResolveControlVariable
+_e1, _sig -> _e1P, _sigP
+---
+switch(_e1, switchBody(_e2, _statement, _switchBody)), _sig -> switch(_e1P, switchBody(_e2, _statement, _switchBody)), _sigP !try seq(seq(seq(seq(seq(seq(seq(seq(seq(seq(seq(seq(seq(seq(seq(seq(seq(seq(seq(seq(seq(seq(seq(seq(seq(seq(seq(seq(seq(seq(seq(seq(seq(seq(seq(seq(seq(seq(seq(seq(setBpm(130), declareChannel(1)), declareChannel(2)), declareChannel(3)), declareChannel(4)), setChannelInstrument(1, 62)), setChannelInstrument(2, 81)), setChannelInstrument(3, 128)), setChannelInstrument(4, 117)), assign(oneBarRest, repeat("[.:4]", 4))), assign(fourBarRest, repeat(deref(oneBarRest), 4))), assign(oneBarDrumLoop, repeat("[C4:8, C4:8, {C4/D4/E4/F4}:8, C4:8]", 2))), assign(twoBarDrumLoopDotted, concat(repeat("[{C4/D4/E4/F4}:8, C4:8, C4:8]", 4), repeat("[{C4/D4/E4/F4}:8, C4:8]", 2)))), assign(fourBarDrumLoop, repeat(deref(oneBarDrumLoop), 4))), assign(bassIntro, concat(concat(repeat("[C2:1]", 2), "[C2:2, C2:4, .:8, F2:2]"), "[D3:4dot, .:4]"))), assign(bass8ths, concat(concat(concat(repeat(repeat("[C2:8]", 8), 2), repeat("[C2:8]", 7)), repeat("[F2:8]", 4)), repeat("[G2:8]", 5)))), assign(synthChords1, concat("[.:4, {G4/B4/D5}:8, .:4, {G4/C5/E5}:8, .:4]", "[{F3/A4/C5}:8, .:8, .:8, {F3/A4/C5}:8, .:8, {G4/B4/D5}:8, .:8, {G4/B4/D5}:4dot, {G4/C5/E5}:8, .:4, {F3/A4/C5}:8, .:8, {C3/F3/A4}:4, {C3/E3/G4}:4, {C3/D3/A4}:2, .:8]"))), assign(synthChords2, concat("[.:4, {F5/A5/C6}:8, .:4, {F5/A5/C6}:8, .:4, {F5/A5/C6}:8, .:4, {F5/A5/C6}:8, .:4, {C4/E5/G5}:4]", "[.:4, {F3/A4/C4}:8, .:4, {C3/F3/A4}:8, .:8, {C3/F3/A4}:4, {E3/G3}:8, .:8, {C3/D3/G4}:2, .:8]"))), assign(songIntroBass, concat(repeat(deref(bassIntro), 2), repeat(deref(bass8ths), 2)))), assign(songIntroSynth, concat(repeat(deref(synthChords1), 3), deref(synthChords2)))), assign(songIntroToms, concat(concat(concat(concat(repeat("[.:4]", 14), "[.:8, G5:8, C5:8, C4:8]"), repeat(concat(concat("[C3:4]", repeat("[.:4]", 13)), "[.:8, G5:8, C5:8, C4:8]"), 2)), repeat("[.:4]", 14)), "[.:8, G5:8, C5:8, C4:8]"))), assign(songMiddleSynth, concat(deref(synthChords1), concat(repeat("[{A4/C5}:4dot, {G4/B4}:4dot]", 2), "[{A4/C5}:4, {G4/B4}:4]")))), for(assign(i, 0), lt(deref(i), 3), assign(i, add(deref(i), 1)), seq(assign(lift, "[E5:4, D5:2dot, .:8]"), if(eq(deref(i), 2), assign(songMiddleSynth, concat(concat(deref(songMiddleSynth), "[F4:8, A4:8, C5:8, A4:8, E4:8, G4:8, C4:8]"), modulate(deref(lift), 5))), assign(songMiddleSynth, concat(concat(deref(songMiddleSynth), "[F4:8, A4:8, C5:8, A4:8, E4:8, G4:8, C4:8]"), deref(lift))))))), assign(synthSolo1st4, "")), assign(bassAccompaniment1st4, "")), assign(sustainedLowC, "[{C2/C3}:1]")), assign(sustainedLowF, modulate(deref(sustainedLowC), negate(7)))), assign(sustainedLowG, modulate(deref(sustainedLowF), 2))), assign(sustainedLowBb, modulate(deref(sustainedLowF), 5))), assign(sustainedLowA, modulate(deref(sustainedLowBb), negate(1)))), assign(sustainedLowAb, modulate(deref(sustainedLowA), negate(1)))), assign(descending3rd16ths, "[D5:16, B5:16, G4:16]")), assign(descending3rd4th16ths, "[E5:16, C5:16, G4:16]")), assign(risingMinor3rd16ths, "[A5:16, C5:16]")), assign(risingSemitone16ths, "[E4:16, F4:16]")), assign(i, 0)), while(lt(deref(i), 2), seq(seq(assign(synthSolo1st4, concat(concat(concat(concat(concat(deref(synthSolo1st4), repeat(deref(descending3rd16ths), 2)), repeat(deref(descending3rd4th16ths), 2)), repeat(deref(descending3rd16ths), 3)), repeat(modulate(deref(descending3rd16ths), negate(2)), 3)), deref(risingMinor3rd16ths))), assign(bassAccompaniment1st4, concat(deref(bassAccompaniment1st4), repeat(deref(sustainedLowC), 2)))), assign(i, add(deref(i), 1))))), assign(bassOutro, concat(repeat(deref(sustainedLowG), 2), repeat(deref(sustainedLowC), 3)))), assign(synthOutro, concat(concat(concat("[.:8dot, C4:8dot, D4:8, E4:8dot, C4:8dot, D4:8]", "[E4:8dot, G4:8dot, E4:8, D4:8dot, C4:8dot, D4:8]"), "[D4:4dot, E4:4dot, C4:4]"), repeat("[C4:1]", 2)))), assign(sequencing, 4)), while(ne(deref(sequencing), 0), switch(deref(sequencing), switchBody(1, seq(playConcurrent(concChannel(1, deref(bassOutro), concChannel(2, modulate(deref(synthOutro), 12), concChannel(3, deref(fourBarDrumLoop), concChannel(4, concat(concat("[C4:4, .:4, .:4, .:4]", repeat(deref(oneBarRest), 2)), "[.:4, .:4, .:8, G5:8, C5:8, C4:8, C4:4]")))))), assign(sequencing, 0)), switchBody(2, seq(playConcurrent(concChannel(1, deref(bassAccompaniment1st4), concChannel(2, deref(synthSolo1st4), concChannel(3, deref(fourBarDrumLoop), concChannel(4, concat(concat("[C4:4, .:4, .:4, .:4]", repeat(deref(oneBarRest), 2)), "[.:4, .:4, .:8, G5:8, C5:8, C4:8]")))))), assign(sequencing, 1)), switchBody(3, seq(playConcurrent(concChannel(1, concat(deref(bass8ths), repeat("[.:1]", 8)), concChannel(2, deref(songMiddleSynth), concChannel(3, concat(concat(concat(deref(fourBarDrumLoop), deref(twoBarDrumLoopDotted)), deref(fourBarDrumLoop)), repeat(deref(oneBarDrumLoop), 2)), concChannel(4, "[C3:4]"))))), assign(sequencing, 2)), switchBody(4, seq(playConcurrent(concChannel(1, deref(songIntroBass), concChannel(2, deref(songIntroSynth), concChannel(3, concat(repeat(deref(fourBarRest), 2), repeat(deref(fourBarDrumLoop), 2)), concChannel(4, deref(songIntroToms)))))), assign(sequencing, 3))))))))), __map

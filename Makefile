@@ -6,7 +6,7 @@ ifeq ($(showAll), true)
 endif
 
 # Compile the BitSequencer java backend
-buildplugin: clean
+buildplugin:
 	javac  -d ./build -cp ".:BitSequencer" BitSequencer/*.java BitSequencer/**/*.java
 	cd build && jar cvf ./BitSequencer.jar ./BitSequencer && cd ..
 	javac  -d ./build -cp ".:./ART/art.jar:./build/BitSequencer.jar" ValueUserPlugin.java
@@ -50,6 +50,23 @@ parse_aa: buildplugin
 	java -Dlogging=$(logging) -cp ".:./ART/art.jar:./build/BitSequencer.jar" ARTTest $2 $3 $4 $5 $6 $7 $8 $9 programs/$(program).str +phaseAG $(SHOWALL)
 	mv ARTGenerated* build/
 # =========================================================== #
+
+generate_esos_parser: buildplugin
+	mkdir -p package/esos_parser;
+	java -cp ".:./ART/art.jar" uk.ac.rhul.cs.csle.art.v3.ARTV3 grammars/BitSequencerEsos.art;
+	javac -Xlint -cp ".:./ART/art.jar" ARTGeneratedParser.java ARTGeneratedLexer.java;
+	mv ARTGenerated* package/esos_parser;
+
+generate_aa_parser: buildplugin
+	mkdir -p package/aa_parser;
+	java -cp ".:./ART/art.jar" uk.ac.rhul.cs.csle.art.v3.ARTV3 grammars/BitSequencerAttributeAction.art
+	javac -Xlint -cp ".:./ART/art.jar" ARTGeneratedParser.java ARTGeneratedLexer.java;
+	mv ARTGenerated* package/aa_parser;
+
+package: generate_esos_parser generate_aa_parser
+	./scripts/windowssubmission.sh;
+
+
 clean:
 	rm -rf term.txt
 	rm -rf *.dot
