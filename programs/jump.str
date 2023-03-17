@@ -104,8 +104,9 @@ while(sequencing != 0) do
       );
       sequencing = 3;
   done
-done      
+done
 
-
-
-
+_DELETE_CHANNEL 1;
+_DELETE_CHANNEL 2;
+_DELETE_CHANNEL 3;
+_DELETE_CHANNEL 4;

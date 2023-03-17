@@ -9,85 +9,85 @@ prelude {
 
 support {
   Map<String, BindingInterface> symbolTable = new HashMap<>();
+  ValueUserPlugin plugin = new ValueUserPlugin();
   PhraseFactory phraseFactory = new PhraseFactory();
-  private Map<Integer, MiniMusicPlayer> channelsToPlayers = new HashMap<Integer, MiniMusicPlayer>();
-  
-  MiniMusicPlayer musicPlayer;
 
-  int _bpm = 120;
-
-  /* Map of midi channels to instrument numbers. Set with `SET_INSTRUMENT` */
-  Map<Integer, Integer> channelsToInstruments = new HashMap<Integer, Integer>();
-  
-  /* Maps midi channels to phrases. Set with `LOAD_CONCURRENT` and cleared after played by `PLAY_CONCURRENT` */
-  Map<Integer, String> concurrentChannels = new HashMap<Integer, String>();
-
-  // Lazy-instantiate the music player (so test programs that don't actually use one aren't slowed down by it)
-  void _instantiate() {
-    if (musicPlayer == null)
-      musicPlayer = new MiniMusicPlayer();
-  }
-
-  void printAllInstruments() {
-    _instantiate();
-    musicPlayer.printAllInstruments();
-  }
-
-  void playPhrase(int channel, String phrase) {
-    _instantiate();
-    musicPlayer.setInstrument(channel, channelsToInstruments.getOrDefault(channel, 0));
-    musicPlayer.playPhrase(channel, phraseFactory.constructMeasureListFromPhraseString(phrase));
-  }
-
-  void setInstrument(int channel, int instrument) {
-    channelsToInstruments.put(channel, instrument);
-  }
-
-  void loadConcurrent(int channel, String phrase) {
-    concurrentChannels.put(channel, phrase);
-  }
-
-  void playConcurrent() {
+  void callUserPlugin(Value... args) {
     try {
-      List<Thread> threads = new ArrayList<Thread>(concurrentChannels.size());
-      for (Map.Entry<Integer, String> e : concurrentChannels.entrySet()) {
-        threads.add(new Thread(
-          new RunnablePlayer(
-            e.getKey(), 
-            channelsToInstruments.getOrDefault(e.getKey(), 0),
-            e.getValue(), _bpm, channelsToPlayers.get(e.getKey())
-            )));
-      }
-      for (Thread thread : threads) {
-        thread.start();
-      }
-      for (Thread thread : threads) {
-        thread.join();
-      }
-    } catch (InterruptedException e) {
-      /* ignore  */
+      plugin.user(args);
+    } catch (ARTException e) {
+      System.err.println(e.toString());
     }
-    concurrentChannels.clear();
-  }
-
-  void setBpm(int bpm) {
-    _instantiate();
-    _bpm = bpm;
-    musicPlayer.setBpm(bpm);
   }
 
   void log(String msg) {
-    if (Boolean.getBoolean("logging")) {
-      System.out.println("(log) " + msg);
+  if (Boolean.getBoolean("logging")) {
+    System.out.println("(log) " + msg);
     }
   }
 
+  void printAllInstruments() {
+    int opCode = ValueUserPlugin.OpCode.PRINT_AVAILABLE_INSTRUMENTS.ordinal();
+    callUserPlugin(new Value[]{new __int32((Integer) opCode)});
+  }
+
+  void playPhrase(int channel, String phrase) {
+    int opCode = ValueUserPlugin.OpCode.PLAY_PHRASE.ordinal();
+    callUserPlugin(new Value[]{
+      new __int32((Integer) opCode), 
+      new __int32((Integer) channel), 
+      new __string(phrase)});
+  }
+
+  void setInstrument(int channel, int instrument) {
+    int opCode = ValueUserPlugin.OpCode.SET_INSTRUMENT.ordinal();
+    callUserPlugin(new Value[]{
+      new __int32((Integer) opCode),
+      new __int32((Integer) channel),
+      new __int32((Integer) instrument)
+    });
+  }
+
+  void loadConcurrent(int channel, String phrase) {
+    int opCode = ValueUserPlugin.OpCode.LOAD_CONCURRENT.ordinal();
+    callUserPlugin(new Value[]{
+      new __int32((Integer) opCode),
+      new __int32((Integer) channel),
+      new __string(phrase)
+    });
+  }
+
+  void playConcurrent() {
+    int opCode = ValueUserPlugin.OpCode.PLAY_CONCURRENT.ordinal();
+    callUserPlugin(new Value[]{
+      new __int32((Integer) opCode)
+    });
+  }
+
+  void setBpm(int bpm) {
+    log("Setting bpm to " + bpm);
+    log("exception happens line above");
+    int opCode = ValueUserPlugin.OpCode.SET_BPM.ordinal();
+    callUserPlugin(new Value[]{
+      new __int32((Integer) opCode),
+      new __int32((Integer) bpm)}
+    );
+  }
+
   void declareChannel(int channel) {
-    channelsToPlayers.put(channel, new MiniMusicPlayer());
+    int opCode = ValueUserPlugin.OpCode.DECLARE_CHANNEL.ordinal();
+    callUserPlugin(new Value[]{
+      new __int32((Integer) opCode),
+      new __int32((Integer) channel)
+    });
   }
 
   void deleteChannel(int channel) {
-    channelsToPlayers.remove(channel);
+    int opCode = ValueUserPlugin.OpCode.DELETE_CHANNEL.ordinal();
+    callUserPlugin(new Value[]{
+      new __int32((Integer) opCode),
+      new __int32((Integer) channel)
+    });
   }
 
   void logSymbolTableAtEnd() {
@@ -108,7 +108,7 @@ statement ::= seq^^ | assign_stmt^^ ';'^ | play^^ ';'^ | playConcurrent^^ ';'^ |
 (**** Directives ****)
 directive ::= setBpm | setChannelInstrument | printAvailableInstruments | declareChannel | deleteChannel
 setBpm ::= '_SET_BPM' integer                               { setBpm(integer1.v); }
-setChannelInstrument ::= '_SET_INSTRUMENT' integer integer  { channelsToInstruments.put(integer1.v, integer2.v); }
+setChannelInstrument ::= '_SET_INSTRUMENT' integer integer  { setInstrument(integer1.v, integer2.v); }
 printAvailableInstruments ::= '_PRINT_INSTRUMENTS'          { printAllInstruments(); }
 declareChannel ::= '_DECLARE_CHANNEL' integer               { declareChannel(integer1.v); }
 deleteChannel ::= '_DELETE_CHANNEL' integer                 { deleteChannel(integer1.v); }
