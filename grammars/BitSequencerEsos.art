@@ -1,5 +1,5 @@
 (**** Entry ****)
-statement ::= seq^^ | assign^^ ';'^ | play^^ ';'^ | playConcurrent^^ ';'^ | if^^ | while^^ | for^^ | switch^^ | directive^^ ';'^
+statement ::= seq^^ | assign^^ ';'^ | play^^ ';'^ | playConcurrent^^ ';'^ | if^^ | ifElse^^ | while^^ | for^^ | switch^^ | directive^^ ';'^
 (***************)
 
 (**** Directives ****)
@@ -14,16 +14,19 @@ deleteChannel ::= '_DELETE_CHANNEL'^ integer
 (**** Sequencing, statements and expressions ****)
 seq ::= statement statement
 
-if ::= 'if'^ e0 'do'^ statement 'else'^ statement 'done'^
-  | 'if'^ e0 'do'^ statement 'done'^
+if ::= 'if'^ e0 'do'^ statement 'done'^
+
+ifElse ::=  'if'^ e0 'do'^ statement 'else'^ statement 'done'^
 
 while ::=  'while'^ e0 'do'^ statement 'done'^
 
 for ::= 'for'^ '('^ assign ';'^ e0 ';'^ assign ')'^ 'do'^ statement 'done'^
 
 switch ::= 'switch'^ '('^ e0 ')'^  cases 'done'^
-cases ::= case^^ | case^^ cases
-case ::= 'case'^ e0 ':'^ statement | 'default'^ ':'^ statement
+cases ::= case^^ | case^^ cases | optDefault^^
+case ::= 'case'^ e0 ':'^ statement
+optDefault ::= 'default'^ ':'^ statement
+break ::= 'break'^ ';'^
 
 assign ::= identifier '='^ phrase0
   | identifier '='^ e0

@@ -289,16 +289,16 @@ if(_E, _C1), _sig -> if(_B, _C1), _sigP
 
 -ifElseTrue 
 ---
-if(True, _C1, _C2), _sig -> _C1, _sig
+ifElse(True, _C1, _C2), _sig -> _C1, _sig
 
 -ifElseFalse 
 ---
-if(False, _C1, _C2), _sig -> _C2, _sig
+ifElse(False, _C1, _C2), _sig -> _C2, _sig
 
 -ifElseResolve
 _E, _sig -> _B, _sigP
 ---
-if(_E,_C1,_C2),_sig -> if(_B, _C1, _C2), _sigP
+ifElse(_E,_C1,_C2),_sig -> ifElse(_B, _C1, _C2), _sigP
 
 -while
 ---
@@ -431,12 +431,12 @@ deleteChannel(_channel), _sig -> __user(10, _channel), _sig
 -switchDefault
 _e |> __int32(_)
 ---
-switch(_e, case(_c)), _sig -> _c, _sig
+switch(_e, optDefault(_c)), _sig -> _c, _sig
 
 -switchMultipleCase
 _e |> __int32(_) _i |> __int32(_)
 ---
-switch(_e, case(_i, _c, _cases)), _sig -> if(__eq(_e, _i), _c, switch(_e, _cases)), _sig
+switch(_e, case(_i, _c, _cases)), _sig -> ifElse(__eq(_e, _i), _c, switch(_e, _cases)), _sig
 
 -switchSingleCase
 _e |> __int32(_) _i |> __int32(_)
