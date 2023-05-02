@@ -21,10 +21,9 @@ while ::=  'while'^ e0 'do'^ statement 'done'^
 
 for ::= 'for'^ '('^ assign ';'^ e0 ';'^ assign ')'^ 'do'^ statement 'done'^
 
-switch ::= 'switch'^ '('^ e0 ')'^  switchBody 'done'^
-
-switchBody ::= 'case'^ e0 ':'^ statement
-  | 'case'^ e0 ':'^ statement switchBody
+switch ::= 'switch'^ '('^ e0 ')'^  cases 'done'^
+cases ::= case^^ | case^^ cases
+case ::= 'case'^ e0 ':'^ statement | 'default'^ ':'^ statement
 
 assign ::= identifier '='^ phrase0
   | identifier '='^ e0

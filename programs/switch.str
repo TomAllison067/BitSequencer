@@ -6,6 +6,8 @@ switch(j)
     j = 3;
   case 3:
     j = 4;
+  default:
+    j = -69;
 done
 
 q = 0;

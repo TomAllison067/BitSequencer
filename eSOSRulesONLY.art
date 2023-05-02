@@ -428,46 +428,22 @@ _channel |> __int32(_)
 ---
 deleteChannel(_channel), _sig -> __user(10, _channel), _sig
 
-
--switchBodyLeafNode
+-switchDefault
+_e |> __int32(_)
 ---
-switchBody(_e2, _statement), _sig -> _e2, _statement, __done, _sig
+switch(_e, case(_c)), _sig -> _c, _sig
 
--switchBodyNode
+-switchMultipleCase
+_e |> __int32(_) _i |> __int32(_)
 ---
-switchBody(_e2, _statement, _switchBody), _sig -> _e2, _statement, _switchBody, _sig
+switch(_e, case(_i, _c, _cases)), _sig -> if(__eq(_e, _i), _c, switch(_e, _cases)), _sig
 
--switchSingleCaseFalse
-_e1 |> __int32(_) _e2 |> __int32(_) __eq(_e1, _e2) |> False
+-switchSingleCase
+_e |> __int32(_) _i |> __int32(_)
 ---
-switch(_e1, switchBody(_e2, _statement)), _sig -> __done, _sig
+switch(_e, case(_i, _c)), _sig -> if(__eq(_e, _i), _c), _sig
 
--switchSingleCaseTrue
-_e1 |> __int32(_) _e2 |> __int32(_) __eq(_e1, _e2) |> True
+-switchResolveE
+_e, _sig -> _eP, _sigP
 ---
-switch(_e1, switchBody(_e2, _statement)), _sig -> seq(_statement, __done), _sig
-
--switchSingleCaseResolveControl
-_e1, _sig -> _e1P, _sigP
----
-switch(_e1, switchBody(_e2, _statement)), _sig -> switch(_e1P, switchBody(_e2, _statement)), _sigP
-
--switchMultipleCasesTrue
-_e1 |> __int32(_) _e2 |> __int32(_) __eq(_e1, _e2) |> True
----
-switch(_e1, switchBody(_e2, _statement, _switchBody)), _sig -> seq(_statement, __done), _sig
-
--switchMultipleCasesAtEndOfListAssumeFalse
-_switchBody |> __done
----
-switch(_e1, switchBody(_e2, _statement, _switchBody)), _sig -> __done, _sig
-
--switchMultipleCasesFalseMoreToGo
-_e1 |> __int32(_) _e2 |> __int32(_) __eq(_e1, _e2) |> False _switchBody, _sig -> _e2P, _statementP, _switchBodyP, _sigP
----
-switch(_e1, switchBody(_e2, _statement, _switchBody)), _sig -> switch(_e1, switchBody(_e2P, _statementP, _switchBodyP)), _sigP
-
--switchMultipleCasesResolveControlVariable
-_e1, _sig -> _e1P, _sigP
----
-switch(_e1, switchBody(_e2, _statement, _switchBody)), _sig -> switch(_e1P, switchBody(_e2, _statement, _switchBody)), _sigP
+switch(_e, _cases), _sig -> switch(_eP, _cases), _sigP
