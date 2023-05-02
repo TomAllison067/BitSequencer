@@ -157,26 +157,32 @@ for_init ::= assign_stmt | e0
 for_test<v:int> ::= e0 { for_test.v = e01.v; }
 for_increment ::= assign_stmt
 
-switch_stmt ::= 'switch' '(' e0 ')' { switch_body1.control = e01.v; } switch_body 'done'
-switch_body <control:Integer> ::= 
-    // Single case / end of switch cases
-    'case' e0< ':' statement<   
-    {                                           
-      artEvaluate(switch_body.e01, e01);
-      if (e01.v.equals(switch_body.control)) {
-        artEvaluate(switch_body.statement1, statement1);
-      } 
+switch_stmt<runDefault:Integer> ::= 'switch' '(' e0 ')' { cases1.control = e01.v; cases1.runDefault = 1; } cases 'done'
+cases <control:Integer runDefault:Integer> ::= 
+    { sCase1.control = cases.control; sCase1.runDefault = cases.runDefault; } 
+    sCase 
+  | { sCase1.control = cases.control; sCase1.runDefault = cases.runDefault; } 
+    sCase 
+    { cases1.control = cases.control; cases1.runDefault = sCase1.runDefault; } 
+    cases
+  | { optDefault1.runDefault = cases.runDefault; } 
+    optDefault
+
+
+sCase <control:Integer runDefault:Integer> ::= 'case' e0 ':' statement<
+  { 
+    if(e01.v.equals(sCase.control)) {
+      artEvaluate(sCase.statement1, statement1);
+      sCase.runDefault = 0;
     }
-  | // Multiple cases
-    'case' e0< ':' statement< { switch_body1.control = switch_body.control; } switch_body< 
-    { 
-      artEvaluate(switch_body.e01, e01);
-      if (e01.v.equals(switch_body.control)) {
-        artEvaluate(switch_body.statement1, statement1);
-      } else {
-        artEvaluate(switch_body.switch_body1, switch_body1);
-      }
+  }
+
+optDefault <runDefault:Integer> ::= 'default' ':' statement<
+  {
+    if (optDefault.runDefault != 0) {
+      artEvaluate(optDefault.statement1, statement1);
     }
+  }
 
 assign_stmt ::= identifier '='^ phrase0    { symbolTable.put(identifier1.v, new PhraseBinding(phrase01.v)); log(identifier1.v + " = " + phrase01.v);}
   | identifier '='^ e0                { symbolTable.put(identifier1.v, new PhraseBinding(e01.v)); log(identifier1.v + " = " + e01.v); }

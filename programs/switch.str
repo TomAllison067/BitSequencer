@@ -19,16 +19,18 @@ done
 m = 0;
 switch(m)
   case 0:
-    n = 8;
+    n = 0;
     switch(n)
       case 9:
         n = 10;
       case 8:
         n = 11;
+      default:
         m = 1;
+        n = 420;
       done
-  case 1:
-    m = 3;
+  default:
+    m = 93;
 done
 
 i = 1;
