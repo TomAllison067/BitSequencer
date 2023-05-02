@@ -302,7 +302,7 @@ if(_E,_C1,_C2),_sig -> if(_B, _C1, _C2), _sigP
 
 -while
 ---
-while(_E, _C),_sig -> if(_E, seq(_C, while(_E,_C)), __done), _sig
+while(_E, _C),_sig -> if(_E, seq(_C, while(_E,_C))), _sig
 
 -forBody
 ---

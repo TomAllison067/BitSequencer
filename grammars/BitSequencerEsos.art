@@ -24,7 +24,7 @@ for ::= 'for'^ '('^ assign ';'^ e0 ';'^ assign ')'^ 'do'^ statement 'done'^
 switch ::= 'switch'^ '('^ e0 ')'^  switchBody 'done'^
 
 switchBody ::= 'case'^ e0 ':'^ statement
-  | 'case'^ e0 ':'^ statement switchBody  
+  | 'case'^ e0 ':'^ statement switchBody
 
 assign ::= identifier '='^ phrase0
   | identifier '='^ e0
