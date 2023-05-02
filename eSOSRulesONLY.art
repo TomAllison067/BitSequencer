@@ -272,46 +272,6 @@ _E1, _sig -> _I1, _sigP
 ---
 or(_E1, _E2), _sig -> or(_I1, _E2), _sigP
 
-// == CONTROL FLOW ==
-
--ifTrue
----
-if(True, _C1), _sig -> _C1, _sig
-
--ifFalse
----
-if(False, _C1), _sig -> __done, _sig
-
--ifResolve
-_E, _sig -> _B, _sigP
----
-if(_E, _C1), _sig -> if(_B, _C1), _sigP
-
--ifElseTrue 
----
-ifElse(True, _C1, _C2), _sig -> _C1, _sig
-
--ifElseFalse 
----
-ifElse(False, _C1, _C2), _sig -> _C2, _sig
-
--ifElseResolve
-_E, _sig -> _B, _sigP
----
-ifElse(_E,_C1,_C2),_sig -> ifElse(_B, _C1, _C2), _sigP
-
--while
----
-while(_E, _C),_sig -> if(_E, seq(_C, while(_E,_C))), _sig
-
--forBody
----
-forBody(_test, _body, _increment), _sig -> if(_test, seq(_body, seq(_increment, forBody(_test, _body, _increment)))), _sig
-
--forLoop
----
-for(_init, _test, _incr, _body), _sig -> seq(_init, forBody(_test, _body, _incr)), _sig
-
 -deref
 ---
 deref(_R), _sig -> __get(_sig, _R), _sig
@@ -428,6 +388,47 @@ _channel |> __int32(_)
 ---
 deleteChannel(_channel), _sig -> __user(10, _channel), _sig
 
+// == CONTROL FLOW ==
+
+-ifTrue
+---
+if(True, _C1), _sig -> _C1, _sig
+
+-ifFalse
+---
+if(False, _C1), _sig -> __done, _sig
+
+-ifResolve
+_E, _sig -> _B, _sigP
+---
+if(_E, _C1), _sig -> if(_B, _C1), _sigP
+
+-ifElseTrue 
+---
+ifElse(True, _C1, _C2), _sig -> _C1, _sig
+
+-ifElseFalse 
+---
+ifElse(False, _C1, _C2), _sig -> _C2, _sig
+
+-ifElseResolve
+_E, _sig -> _B, _sigP
+---
+ifElse(_E,_C1,_C2),_sig -> ifElse(_B, _C1, _C2), _sigP
+
+-while
+---
+while(_E, _C),_sig -> if(_E, seq(_C, while(_E,_C))), _sig
+
+-forBody
+---
+forBody(_test, _body, _increment), _sig -> if(_test, seq(_body, seq(_increment, forBody(_test, _body, _increment)))), _sig
+
+-forLoop
+---
+for(_init, _test, _incr, _body), _sig -> seq(_init, forBody(_test, _body, _incr)), _sig
+
+// Switch
 -switchDefault
 _e |> __int32(_)
 ---
